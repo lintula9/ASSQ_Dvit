@@ -1,6 +1,6 @@
 # Packages.
 
-package_names <- c("haven", "ggplot2", "mclust", "mixtools")
+package_names <- c("haven", "ggplot2", "mclust", "mixtools", "flexmix")
 
 for (i in package_names){
   if ( !requireNamespace( i, 

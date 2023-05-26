@@ -2,7 +2,7 @@
 
 package_names <- c("haven", "ggplot2", "mclust", 
                    "mixtools", "flexmix", "mice",
-                   "GGally")
+                   "GGally", "gridExtra")
 
 for (i in package_names){
   if ( !requireNamespace( i, 
@@ -11,3 +11,4 @@ for (i in package_names){
     install.packages( i )
   }
   library( i, character.only = TRUE )}
+

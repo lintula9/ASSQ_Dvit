@@ -11,7 +11,9 @@ lcavars <- c("Rask_S25OHD",
 lcavars_nonapa <- c("Rask_S25OHD",
                     "S25OHD_12kk",
                     "S25OHD_24kk")
-lcavars_6to8Included <- c("")
+
+lcavars_6to8Included <- c(lcavars, "D25OHD_nmol_l_6to8") # Variable was not in the dataset.
+
 
 # Visualize relationships between D-vitamin variables.
 
@@ -19,6 +21,10 @@ ggpairs(na.omit(df[,c(lcavars,"sukupuoli")]),
         columns = lcavars, 
         mapping = aes(col = factor(sukupuoli)))
 
+
+          ####################################
+          # Fit models ------------###########
+          
 # LCA with all d-vitamin concentration measurements.
 
 LatentGaussians <- Mclust( data = na.omit( df[ , lcavars ] ), 
@@ -28,7 +34,12 @@ LatentGaussians <- Mclust( data = na.omit( df[ , lcavars ] ),
 LatentGaussians_NoNapa <- Mclust( data = na.omit( df[ , lcavars_nonapa ] ), 
                                  G = 1:6 )
 
-# Result plots.
+LatentGaussians_6to8Included <- Mclust( data = na.omit( df[ , lcavars_6to8Included ] ), 
+                                        G = 1:6 ) # 
+
+
+      ##############################################
+      ################## Result plots. -------- ####
 
 pdf( "Figures/LPAFigs.pdf" , # Create PDF.
     pointsize = 12, 

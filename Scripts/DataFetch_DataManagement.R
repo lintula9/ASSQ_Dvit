@@ -2,7 +2,15 @@
 
 source("Scripts/Libraries.R")
 
-dataPath <- "Z:/psy_vidi/Samuel VIDI 6-8y follow-up/Master2022.sav"
-df <- read_spss(dataPath)
+# Newer data set became avaialable 30.5.
+# 6 to 8 year old data is available.
+# dataPath <- "Z:/psy_vidi/Samuel VIDI 6-8y follow-up/Master2022.sav"
+# df <- read_spss(dataPath)
 
-# Data modifications (if necessary) here:)
+# Data modifications (if necessary) here:
+
+dataPath2 <- "Z:/psy_vidi/Samuel VIDI 6-8y follow-up/ASSQMaster data - Sakari/ASSQMaster_SakariMod.sav"
+df <- read_spss(dataPath2)
+
+
+

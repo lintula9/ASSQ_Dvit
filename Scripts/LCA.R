@@ -8,9 +8,9 @@ lcavars <- c("Rask_S25OHD",
              "S25OHD_12kk",
              "S25OHD_24kk")
 
-lcavars_nonapa <- c("Rask_S25OHD",
+lcavars_nonapa <- c( "Rask_S25OHD",
                     "S25OHD_12kk",
-                    "S25OHD_24kk")
+                    "S25OHD_24kk" )
 
 lcavars_6to8Included <- c(lcavars, "D25OHD_nmol_l_6to8") # Variable was not in the dataset.
 
@@ -26,25 +26,60 @@ ggpairs(na.omit(df[,c(lcavars,"sukupuoli")]),
           ####################################
           # Fit models ------------###########
           
-# LCA with all d-vitamin concentration measurements.
+# LCA with all d-vitamin concentration pre 6 to 8 year measurements.
 
 LatentGaussians <- Mclust( data = na.omit( df[ , lcavars ] ), 
                           G = 1:6 )
-# LCA without Napa25OHD
+
+
+
+# LCA without Napa25OHD; pre 6 to 8 year ------------
 
 LatentGaussians_NoNapa <- Mclust( data = na.omit( df[ , lcavars_nonapa ] ), 
                                  G = 1:6 )
 
-# LCA with 6-8 year old included
+
+
+# LCA with 6-8 year measurements included --------------
 
 LatentGaussians_All <- Mclust( data = na.omit( df[ , lcavars_6to8Included ] ), 
-                               G = 1:6 )
-  # Runs into missing data problems: only 224 available.
+                               G = 1:6 )   # Runs into missing data problems: only 224 available.
 
-# Gaussians, stratified by sex. Using all pre 6-8 year data.
+
+
+
+# Gaussians, stratified by sex. Using all pre 6-8 year data. ---------
 
 LatentGaussians_sexstrat1 <- Mclust( data = na.omit( df[ df$sukupuoli == 1 , lcavars ] ), 
                            G = 1:6 )
 LatentGaussians_sexstrat2 <- Mclust( data = na.omit( df[ df$sukupuoli == 2 , lcavars ] ), 
                            G = 1:6 )
 
+
+
+# Using 3 measurmenets (raskaus, 12kk, 24kk), what do the profiles relate to?
+
+df$profile <- NA
+
+df[ which( df$id %in% na.exclude(df[ , c(lcavars_nonapa, "id" ) ])$id ) , ]$profile <- LatentGaussians_NoNapa$classification
+
+grid.arrange(tableGrob(table(df$Ryhmä, df$profile, useNA = "no"), theme = ttheme_minimal()))
+px <- c(sum(df$profile == 1, na.rm = T) / length( na.omit(df$profile) ), 
+        sum(df$profile == 2, na.rm = T) / length( na.omit(df$profile) ) )
+qx <- c(sum(df$Ryhmä == 1, na.rm = T) / length( na.omit(df$Ryhmä) ),
+        sum(df$Ryhmä == 2, na.rm = T) / length( na.omit(df$Ryhmä) ) )
+-sum(df$Ryhmä * px[ df$Ryhmä ] * log( ( df$Ryhmä * qx[ df$Ryhmä ] ) / ( df$Ryhmä * px[ df$Ryhmä ] ) ), 
+     na.rm = T )
+sum(df$Ryhmä * px[ df$Ryhmä ] * log( ( df$Ryhmä * px[ df$Ryhmä ] ) / ( df$Ryhmä * qx[ df$Ryhmä ] ) ), 
+     na.rm = T )
+chisq.test(table(df$Ryhmä, df$profile, useNA = "no"))
+
+table(df$sukupuoli, df$profile, useNA = "no") ; chisq.test(table(df$sukupuoli, df$profile, useNA = "no"))
+table(df$äidinkoulutus, df$profile, useNA = "no") ; chisq.test(table(df$äidinkoulutus, df$profile, useNA = "no"))
+table(df$isankoulutus, df$profile, useNA = "no") ; chisq.test(table(df$äidinkoulutus, df$profile, useNA = "no"))
+
+df_temp <- data.frame(sapply(df[ , c( "profile", "Ryhmä" )], factor))
+ggpairs(na.omit(df_temp), aes( col = profile ))
+
+
+       

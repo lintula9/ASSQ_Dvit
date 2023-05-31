@@ -57,29 +57,9 @@ LatentGaussians_sexstrat2 <- Mclust( data = na.omit( df[ df$sukupuoli == 2 , lca
 
 
 
-# Using 3 measurmenets (raskaus, 12kk, 24kk), what do the profiles relate to?
+# Add 3 measurments result to data frame -----
 
 df$profile <- NA
-
 df[ which( df$id %in% na.exclude(df[ , c(lcavars_nonapa, "id" ) ])$id ) , ]$profile <- LatentGaussians_NoNapa$classification
 
-grid.arrange(tableGrob(table(df$Ryhmä, df$profile, useNA = "no"), theme = ttheme_minimal()))
-px <- c(sum(df$profile == 1, na.rm = T) / length( na.omit(df$profile) ), 
-        sum(df$profile == 2, na.rm = T) / length( na.omit(df$profile) ) )
-qx <- c(sum(df$Ryhmä == 1, na.rm = T) / length( na.omit(df$Ryhmä) ),
-        sum(df$Ryhmä == 2, na.rm = T) / length( na.omit(df$Ryhmä) ) )
--sum(df$Ryhmä * px[ df$Ryhmä ] * log( ( df$Ryhmä * qx[ df$Ryhmä ] ) / ( df$Ryhmä * px[ df$Ryhmä ] ) ), 
-     na.rm = T )
-sum(df$Ryhmä * px[ df$Ryhmä ] * log( ( df$Ryhmä * px[ df$Ryhmä ] ) / ( df$Ryhmä * qx[ df$Ryhmä ] ) ), 
-     na.rm = T )
-chisq.test(table(df$Ryhmä, df$profile, useNA = "no"))
 
-table(df$sukupuoli, df$profile, useNA = "no") ; chisq.test(table(df$sukupuoli, df$profile, useNA = "no"))
-table(df$äidinkoulutus, df$profile, useNA = "no") ; chisq.test(table(df$äidinkoulutus, df$profile, useNA = "no"))
-table(df$isankoulutus, df$profile, useNA = "no") ; chisq.test(table(df$äidinkoulutus, df$profile, useNA = "no"))
-
-df_temp <- data.frame(sapply(df[ , c( "profile", "Ryhmä" )], factor))
-ggpairs(na.omit(df_temp), aes( col = profile ))
-
-
-       

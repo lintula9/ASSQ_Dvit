@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-Data
+Data/
 Presentation.Rmd
 Presentation.html
+To do notes.txt

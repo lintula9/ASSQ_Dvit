@@ -1,6 +1,6 @@
 ##### LCA:
 
-source("Scripts/DataFetch_DataManagement.R")
+if(!exists("df")) source("Scripts/DataFetch_DataManagement.R")
 
 # Select variables.
 lcavars <- c("Rask_S25OHD", 
@@ -42,13 +42,13 @@ LatentGaussians_NoNapa <- Mclust( data = na.omit( df[ , lcavars_nonapa ] ),
 
 # LCA with 6-8 year measurements included --------------
 
-LatentGaussians_All <- Mclust( data = na.omit( df[ , lcavars_6to8Included ] ), 
+LatentGaussians_All <- Mclust( data = na.omit( df[  , lcavars_6to8Included ] ), 
                                G = 1:6 )   # Runs into missing data problems: only 224 available.
 
 
 
 
-# Gaussians, stratified by sex. Using all pre 6-8 year data. ---------
+# LCA, stratified by sex. Using all pre 6-8 year data. ---------
 
 LatentGaussians_sexstrat1 <- Mclust( data = na.omit( df[ df$sukupuoli == 1 , lcavars ] ), 
                            G = 1:6 )
@@ -56,10 +56,25 @@ LatentGaussians_sexstrat2 <- Mclust( data = na.omit( df[ df$sukupuoli == 2 , lca
                            G = 1:6 )
 
 
+# LCA, including cases with ASSQ scores available, using 4 measuremnets (no 6 to 8 year measure) -----
 
-# Add 3 measurments result to data frame -----
+LatentGaussians_OnlyWith_ASSQavailable <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars ] ), 
+                               G = 1:6 )
+
+
+# Add 3 measurments result to data frame (for PDFs and figures, etc.) -----
 
 df$profile <- NA
 df[ which( df$id %in% na.exclude(df[ , c(lcavars_nonapa, "id" ) ])$id ) , ]$profile <- LatentGaussians_NoNapa$classification
 
 
+# Save results, as a new SPSS file. -----
+
+df$LDvitProfile_Rask_to_2year <- NA # 4 measurements profiles.
+df[ which( df$id %in% na.exclude(df[ , c(lcavars, "id" ) ])$id ) , ]$LDvitProfile_Rask_to_2year <- LatentGaussians$classification
+
+df$LDvitProfile_NoNapa_to_2year <- NA # No napa, 3 measurements.
+df[ which( df$id %in% na.exclude(df[ , c(lcavars_nonapa, "id" ) ])$id ) , ]$LDvitProfile_NoNapa_to_2year <- LatentGaussians_NoNapa$classification
+
+writepath <- "Z:/psy_vidi/Samuel VIDI 6-8y follow-up/ASSQMaster data - Sakari/ASSQMaster_Profiles.sav"
+write_sav(df, writepath)

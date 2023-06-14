@@ -67,21 +67,6 @@ LatentGaussians_OnlyWith_ASSQavailable_3measures <- Mclust( data = na.omit( df[ 
                                                   G = 1:6 )
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Save results, as a new SPSS file. -----
 
   # df$profile <- NA

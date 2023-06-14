@@ -3,7 +3,7 @@
 package_names <- c("haven", "ggplot2", "mclust", 
                    "mixtools", "flexmix", "mice",
                    "GGally", "gridExtra", "scales",
-                   "tidyverse")
+                   "tidyverse", "MASS")
 
 for (i in package_names){
   if ( !requireNamespace( i, 

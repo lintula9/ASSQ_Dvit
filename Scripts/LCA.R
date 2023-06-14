@@ -18,9 +18,9 @@ lcavars_6to8Included <- c(lcavars, "D25OHD_nmol_l_6to8") # Variable was not in t
 
 # Visualize relationships between D-vitamin variables.
 
-ggpairs(na.omit(df[,c(lcavars,"sukupuoli")]), 
+ggpairs(na.omit( df[ , c(lcavars,"sukupuoli") ] ), 
         columns = lcavars, 
-        mapping = aes(col = factor(sukupuoli)))
+        mapping = aes( col = factor( sukupuoli ) ) )
 
 
           ####################################
@@ -61,20 +61,36 @@ LatentGaussians_sexstrat2 <- Mclust( data = na.omit( df[ df$sukupuoli == 2 , lca
 LatentGaussians_OnlyWith_ASSQavailable <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars ] ), 
                                G = 1:6 )
 
+# LCA, including cases with ASSQ scores available, using 3 measuremnets (no 6 to 8 year measure) -----
 
-# Add 3 measurments result to data frame (for PDFs and figures, etc.) -----
+LatentGaussians_OnlyWith_ASSQavailable_3measures <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars_nonapa ] ), 
+                                                  G = 1:6 )
 
-df$profile <- NA
-df[ which( df$id %in% na.exclude(df[ , c(lcavars_nonapa, "id" ) ])$id ) , ]$profile <- LatentGaussians_NoNapa$classification
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Save results, as a new SPSS file. -----
 
-df$LDvitProfile_Rask_to_2year <- NA # 4 measurements profiles.
-df[ which( df$id %in% na.exclude(df[ , c(lcavars, "id" ) ])$id ) , ]$LDvitProfile_Rask_to_2year <- LatentGaussians$classification
-
-df$LDvitProfile_NoNapa_to_2year <- NA # No napa, 3 measurements.
-df[ which( df$id %in% na.exclude(df[ , c(lcavars_nonapa, "id" ) ])$id ) , ]$LDvitProfile_NoNapa_to_2year <- LatentGaussians_NoNapa$classification
-
-writepath <- "Z:/psy_vidi/Samuel VIDI 6-8y follow-up/ASSQMaster data - Sakari/ASSQMaster_Profiles.sav"
-write_sav(df, writepath)
+  # df$profile <- NA
+  # df[ which( df$id %in% na.exclude(df[ , c(lcavars_nonapa, "id" ) ])$id ) , ]$profile <- LatentGaussians_NoNapa$classification
+  # df$LDvitProfile_Rask_to_2year <- NA # 4 measurements profiles.
+  # df[ which( df$id %in% na.exclude(df[ , c(lcavars, "id" ) ])$id ) , ]$LDvitProfile_Rask_to_2year <- LatentGaussians$classification
+  # 
+  # df$LDvitProfile_NoNapa_to_2year <- NA # No napa, 3 measurements.
+  # df[ which( df$id %in% na.exclude(df[ , c(lcavars_nonapa, "id" ) ])$id ) , ]$LDvitProfile_NoNapa_to_2year <- LatentGaussians_NoNapa$classification
+  # 
+  # writepath <- "Z:/psy_vidi/Samuel VIDI 6-8y follow-up/ASSQMaster data - Sakari/ASSQMaster_Profiles.sav"
+  # write_sav(df, writepath)

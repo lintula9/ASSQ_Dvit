@@ -31,14 +31,13 @@ ggpairs(na.omit( df[ , c(lcavars,"sukupuoli") ] ),
 LatentGaussians <- Mclust( data = na.omit( df[ , lcavars ] ), 
                           G = 1:6 )
 
-
+LatentGaussians_2group <- Mclust( data = scale(na.omit( df[ , lcavars ] )), 
+                           G = 2 )
 
 # LCA without Napa25OHD; pre 6 to 8 year ------------
 
 LatentGaussians_NoNapa <- Mclust( data = na.omit( df[ , lcavars_nonapa ] ), 
                                  G = 1:6 )
-
-
 
 # LCA with 6-8 year measurements included --------------
 
@@ -65,6 +64,10 @@ LatentGaussians_OnlyWith_ASSQavailable <- Mclust( data = na.omit( df[ !is.na(df$
 
 LatentGaussians_OnlyWith_ASSQavailable_3measures <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars_nonapa ] ), 
                                                   G = 1:6 )
+
+# LCA, including cases with ASSQ scores available, forcing 2 groups.
+LatentGaussians_OnlyWith_ASSQavailable_2group <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars ] ), 
+                                                  G = 2 )
 
 
 # Save results, as a new SPSS file. -----

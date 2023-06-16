@@ -1,5 +1,5 @@
 ##### LCA:
-
+if(!requireNamespace( "haven", quietly = F )) source("Scripts/Libraries.R")
 if(!exists("df")) source("Scripts/DataFetch_DataManagement.R")
 
 # Select variables.
@@ -76,15 +76,18 @@ LatentGaussians_OnlyWith_ASSQavailable_2group_nonapa <- Mclust( data = na.omit( 
 
 df$LDvitProfile_NoNapa_to_2year <- NA # No napa, 3 measurements.
 df[ which( df$id %in% na.exclude(df[ , c(lcavars_nonapa, "id" ) ])$id ) , ]$LDvitProfile_NoNapa_to_2year <- LatentGaussians_NoNapa$classification
+attr(df$LDvitProfile_NoNapa_to_2year , "label") <- "Latent profile indicator; when using no napa measurement"
+attr(df$LDvitProfile_NoNapa_to_2year , "format.spss") <- "F12.1"
 
 df$LDvitProfile_NoNapa_to_2year_ASSQcases <- NA # No napa, 3 measurements.
 df[ which( df$id %in% 
              na.exclude(df[ !is.na(df$ASSQ_6to8_mean) , c(lcavars_nonapa, "id") ])$id ) , ]$LDvitProfile_NoNapa_to_2year_ASSQcases <- LatentGaussians_OnlyWith_ASSQavailable_2group_nonapa$classification
-
+attr(df$LDvitProfile_NoNapa_to_2year_ASSQcases, "label") <- "Latent profile indicator; when using no napa measurement; only cases with ASSQ measurement"
+attr(df$LDvitProfile_NoNapa_to_2year_ASSQcases , "format.spss") <- "F12.1"
 
   # ASSQ scores available vs. all data: Confusion matrix: ----
 
-
+if ( FALSE ) {
 # Print confusion matrix
 
 table(df$LDvitProfile_NoNapa_to_2year, df$LDvitProfile_NoNapa_to_2year_ASSQcases) # confusion matrix
@@ -106,7 +109,7 @@ likelihoods <- c()
 for ( i in 1:nrow(na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars_nonapa ] ))) {
   x <- na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars_nonapa ] )[ i , ]
   for( k  in 1:length( m ) ) {
-    likelihoods[ i ] <- sum(props[[ k ]] * mvtnorm::dmvnorm( x , mean = m[[ k ]], sigma = S[[ k ]])) 
+    likelihoods[ i ] <- sum(p[[ k ]] * mvtnorm::dmvnorm( x , mean = m[[ k ]], sigma = S[[ k ]])) 
   } } 
   
 LL <- sum(log(likelihoods))
@@ -123,7 +126,7 @@ par(mfrow = c(1,2))
 matplot(LatentGaussians_OnlyWith_ASSQavailable_2group_nonapa$parameters$mean, type = "b")
 matplot(LatentGaussians_NoNapa$parameters$mean, type = "b")
 
-
+}
 
   #
 ########################### Save ############################### 

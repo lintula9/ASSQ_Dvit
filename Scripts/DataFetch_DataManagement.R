@@ -14,4 +14,11 @@ df <- read_spss(dataPath2)
 
 # Remove case 313.
 
-df$id[grep("313", df$id)]
+df$id[grep("313", df$id)] # WHO IS IT?
+
+
+# Add cognitive measure availability indicator
+
+CognitiveAvailable <- strsplit(read_file("IdsWithCognitiveMeasures.txt"), split = "\n")[[1]]
+CognitiveAvailable <- gsub("\r", x = CognitiveAvailable, replacement = "")
+CognitiveAvailable <- df$id %in% CognitiveAvailable

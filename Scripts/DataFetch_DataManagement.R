@@ -12,5 +12,6 @@ source("Scripts/Libraries.R")
 dataPath2 <- "Z:/psy_vidi/Samuel VIDI 6-8y follow-up/ASSQMaster data - Sakari/ASSQMaster_SakariMod.sav"
 df <- read_spss(dataPath2)
 
+# Remove case 313.
 
-
+df$id[grep("313", df$id)]

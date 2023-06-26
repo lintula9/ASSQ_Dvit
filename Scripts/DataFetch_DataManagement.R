@@ -22,3 +22,5 @@ df$id[grep("313", df$id)] # WHO IS IT?
 CognitiveAvailable <- strsplit(read_file("IdsWithCognitiveMeasures.txt"), split = "\n")[[1]]
 CognitiveAvailable <- gsub("\r", x = CognitiveAvailable, replacement = "")
 CognitiveAvailable <- df$id %in% CognitiveAvailable
+
+# 

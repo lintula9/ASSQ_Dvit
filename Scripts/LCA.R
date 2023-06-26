@@ -125,8 +125,31 @@ RelativeLL <- exp( (AIC2 - AIC1) / 2 )
 par(mfrow = c(1,2))
 matplot(LatentGaussians_OnlyWith_ASSQavailable_2group_nonapa$parameters$mean, type = "b")
 matplot(LatentGaussians_NoNapa$parameters$mean, type = "b")
+par(mfrow = c(1,1))
 
 }
+
+  # Simultaneous modelling of ASSQ and S25OHD
+
+LatentGaussians_Simultaneous_ASSQ <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_nonapa, "ASSQ_6to8_sum") ] ), 
+                                             G = 2 )
+with(na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_nonapa, "ASSQ_6to8_sum") ] ) , expr = {
+  
+  par(mfrow = c(2,2))
+  
+  matplot(LatentGaussians_Simultaneous_ASSQ$parameters$mean[1:3,], type = "b")
+  hist(ASSQ_6to8_sum[LatentGaussians_Simultaneous_ASSQ$classification == 1], col = cols[1], 
+       main = "", breaks = seq(from = 0, to = 30, by = 2), freq = F, xlab = "", ylab = "", xlim = c(0,30))
+  lines(density(ASSQ_6to8_sum[LatentGaussians_Simultaneous_ASSQ$classification == 1]), col = cols[1], main = "")
+  hist(ASSQ_6to8_sum[LatentGaussians_Simultaneous_ASSQ$classification == 2], col = cols[2],
+       main = "", breaks = seq(from = 0, to = 30, by = 2), freq = F, xlab = "", xlim = c(0,30))
+  lines(density(ASSQ_6to8_sum[LatentGaussians_Simultaneous_ASSQ$classification == 2]), col = cols[2], main = "")
+
+  par(mfrow = c(1,1))
+  
+  
+  
+})
 
   #
 ########################### Save ############################### 

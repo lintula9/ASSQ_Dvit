@@ -4,7 +4,7 @@ package_names <- c("haven", "ggplot2", "mclust",
                    "mixtools", "flexmix", "mice",
                    "GGally", "gridExtra", "scales",
                    "tidyverse", "MASS", "mvtnorm",
-                   "rstan")
+                   "rstan", "RColorBrewer")
 
 for (i in package_names){
   if ( !requireNamespace( i, 
@@ -14,3 +14,9 @@ for (i in package_names){
   }
   library( i, character.only = TRUE )}
 
+# Graphical settings
+cols <- brewer.pal(n = 8, name = "Dark2")[1:3]
+names(cols) <- c("Total", "Male", "Female")
+theme_set(theme_bw())
+options(ggplot2.discrete.colour= cols)
+par(family = "serif")

@@ -105,6 +105,9 @@ if(FALSE){ # To prevent sourcing problems.
   
   brlmFit2 <- stan( file = "BRLM.stan", data = stan_data2, 
                    chains = 4, iter = 2000, cores = 4 )
+  
+  saveRDS(brlmFit2, file = "brlmfit2")
+  brlmFit <- readRDS("brlmfit2")
 }
 
 
@@ -179,6 +182,9 @@ if(FALSE){ # To prevent sourcing problems.
                     chains = 4, 
                     iter = 2000, 
                     cores = 4 )
+  
+  saveRDS(brlmFit3, file = "brlmfit3")
+  brlmFit <- readRDS("brlmfit3")
 }
 
 # For PDF summary: --------

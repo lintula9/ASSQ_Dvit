@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 Data/
+Figures/
 Presentation.Rmd
 Presentation.html
 To do notes.txt

@@ -1,0 +1,60 @@
+data {
+  int<lower=0> N;
+  int<lower=0> NCovariates;
+  int<lower=0> Nmeasurements;
+  matrix[N, Nmeasurements] Measurements;
+  matrix[N, NCovariates] Covariates; // Sex needs to be the second colum.
+  vector[N] ASSQ;
+  vector[Nmeasurements] alpha;
+  vector[Nmeasurements] ExpSensitiveWeights[Nmeasurements];
+  vector[Nmeasurements] ExpAccumulationWeights;
+  vector[Nmeasurements] ExpCriticalChildhoodWeights;
+}
+parameters {
+  real Intercept;
+  real Delta;
+  real SexInteraction; // Used for the interaction.
+  simplex[Nmeasurements] Weights;
+  vector[NCovariates] Coefficients;
+  real<lower=0> sigma;
+}
+transformed parameters {
+  vector[N] LinearFunction;
+  LinearFunction = Intercept + 
+  Delta * (Measurements * Weights) +
+  SexInteraction * (Covariates[ , 2] .* (Measurements * Weights)) +
+  (Covariates * Coefficients);
+}
+
+model {
+  Intercept ~ normal(0, .5);
+  Weights ~ dirichlet(alpha);
+  Delta ~ normal(0, .5);
+  SexInteraction ~ normal(0, .1); // A tight prior for SexInteraction (to help sampling).
+  sigma ~ exponential(1);
+  for(i in 1:NCovariates){
+    Coefficients[i] ~ normal(0, .5); 
+  }
+  
+  ASSQ ~ normal(LinearFunction, sigma);
+
+}
+
+generated quantities {
+  vector[ Nmeasurements + 2 ] EuclideanDistances;
+  vector[ N ] logLikelihood;
+  vector[ N ] yrep;
+  vector[ N ] residuals;
+  
+  for( i in 1:Nmeasurements){
+    EuclideanDistances[ i ] = distance( Weights, ExpSensitiveWeights[ i ] );
+  }
+  EuclideanDistances[ Nmeasurements + 1 ] = distance( Weights, ExpAccumulationWeights );
+  EuclideanDistances[ Nmeasurements + 2 ] = distance( Weights, ExpCriticalChildhoodWeights );
+  
+  for( n in 1:N ) {
+    logLikelihood[ n ] = normal_lpdf( ASSQ[ n ] | LinearFunction[ n ], sigma );
+    yrep[ n ] = normal_rng( LinearFunction[ n ], sigma );
+    residuals[ n ] = yrep[ n ] - ASSQ[ n ];
+  }
+}

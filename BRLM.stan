@@ -6,8 +6,9 @@ data {
   matrix[N, NCovariates] Covariates;
   vector[N] ASSQ;
   vector[Nmeasurements] alpha;
-  vector[Nmeasurements] ExpCriticalWeights[Nmeasurements];
+  vector[Nmeasurements] ExpSensitiveWeights[Nmeasurements];
   vector[Nmeasurements] ExpAccumulationWeights;
+  vector[Nmeasurements] ExpCriticalChildhoodWeights;
 }
 
 
@@ -38,15 +39,16 @@ model {
 }
 
 generated quantities {
-  vector[ Nmeasurements + 1 ] EuclideanDistances;
+  vector[ Nmeasurements + 2 ] EuclideanDistances;
   vector[ N ] logLikelihood;
   vector[ N ] yrep;
   vector[ N ] residuals;
   
   for( i in 1:Nmeasurements){
-    EuclideanDistances[ i ] = distance( Weights, ExpCriticalWeights[ i ] );
+    EuclideanDistances[ i ] = distance( Weights, ExpSensitiveWeights[ i ] );
   }
   EuclideanDistances[ Nmeasurements + 1 ] = distance( Weights, ExpAccumulationWeights );
+  EuclideanDistances[ Nmeasurements + 2 ] = distance( Weights, ExpCriticalChildhoodWeights );
   
   for( n in 1:N ) {
     logLikelihood[ n ] = normal_lpdf( ASSQ[ n ] | LinearFunction[ n ], sigma );

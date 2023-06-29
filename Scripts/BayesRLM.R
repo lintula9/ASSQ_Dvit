@@ -1,16 +1,25 @@
 # Bayesian Relevant Life-Course Modelling 
 
+# Load data.
+
+if(!exists("package_names")) source("Scripts/Libraries.R")
+if(!exists("dataPath2")) source("Scripts/DataFetch_DataManagement.R")
+
+
+
 library(rstan)
 
 # 3 Toddlerhood, infancy, childhood -----
 bayesVars <- c( "S25OHD_12kk" , "S25OHD_24kk" , "D25OHD_nmol_l_6to8" , # Toddlerhood, infancy and pre-school.
                 "ASSQ_6to8_mean", "sukupuoli" , "ikäASSQ" ) 
+
 bayesdf <- na.exclude( df[ , bayesVars ] )
 Covariates <- bayesdf[ , c("ikäASSQ", "sukupuoli")]
 names(Covariates) <- c("Age", "Sex")
 Covariates$Age <- scale(Covariates$Age)
 Covariates$Sex <- factor(Covariates$Sex, levels = c(1,2), labels = c("Male", "Female"))
 
+ # Create data list for stan.
 stan_data = list(
   
   # D-vitamin variables:
@@ -36,8 +45,11 @@ stan_data = list(
   alpha = c( 1, 1, 1 ), # Dirichlet priors.
   
   # Expected weights for critical period hypotheses
-  ExpCriticalWeights = list( c( 2/3, 1/6, 1/6 ), c( 1/6, 2/3, 1/6 ), c( 1/6, 1/6, 2/3 ) ),
-  ExpAccumulationWeights = c( 0, 0, 1 )
+  ExpCriticalWeights = list( c( 2/3, 1/6, 1/6 ), 
+                             c( 1/6, 2/3, 1/6 ), 
+                             c( 1/6, 1/6, 2/3 ) ),
+  ExpAccumulationWeights = c( 1/3, 1/3, 1/3 ),
+  ExpChildhoodCriticalWeights = c( 0, 0, 1 )
   
     )
 
@@ -50,9 +62,12 @@ if(FALSE){ # To prevent sourcing problems.
       chains = 4, iter = 2000, cores = 4 )
   
   saveRDS(brlmFit, file = "brlmfit")
-  brlmFit <- readRDS("brlmfit")
+  if(!exists("brlmFit")) brlmFit <- readRDS("brlmfit")
 }
 
+# Check the chains:
+
+mcmc_trace(brlmFit, pars = c("Delta", "Coefficients[1]"))
 
 
 # 4 measurements --------------
@@ -79,7 +94,7 @@ stan_data2 = list(
   # Covariates:
   Covariates = subset( model.matrix(~ Age + Sex, data = Covariates2) , select = -c(`(Intercept)`) ),
   NCovariates = ncol(Covariates2),
-  
+
   # Y outcome:
   ASSQ = as.vector(scale( bayesdf2$ASSQ_6to8_mean )),
   
@@ -90,88 +105,64 @@ stan_data2 = list(
   alpha = c( 1, 1, 1, 1 ), # Dirichlet priors.
   
   # Expected weights for critical period hypotheses
-  ExpCriticalWeights = list( c( 2/4, 1/4, 1/4, 1/4 ), 
+  ExpSensitiveWeights = list( c( 2/4, 1/4, 1/4, 1/4 ), 
                              c( 1/4, 2/4, 1/4, 1/4 ), 
                              c( 1/4, 1/4, 2/4, 1/4 ),
                              c( 1/4, 1/4, 1/4, 2/4 )),
-  ExpAccumulationWeights = c( 0, 0, 0, 1 )
+  ExpAccumulationWeights = c( 1/4, 1/4, 1/4, 1/4 ),
+  ExpCriticalChildhoodWeights = c( 0, 0, 0, 1 )
   
 )
-
 
 # Set up the model:
 
 if(FALSE){ # To prevent sourcing problems.
   
-  brlmFit2 <- stan( file = "BRLM.stan", data = stan_data2, 
+  brlmFit2 <- stan( file = "BRLM.stan", 
+                    data = stan_data2, 
                    chains = 4, iter = 2000, cores = 4 )
   
   saveRDS(brlmFit2, file = "brlmfit2")
-  brlmFit <- readRDS("brlmfit2")
+  if(!exists("brlmFit2")) brlmFit2 <- readRDS("brlmfit2")
 }
+
+
+
+
+
+# 4 measurements Interaction --------------
+
+# Set up the model:
+
+if(FALSE){ # To prevent sourcing problems.
+  
+  brlmFit2Interaction <- stan( file = "BRLM_InteractionModel.stan", 
+                               data = stan_data2, 
+                    chains = 4, iter = 4000, cores = 8 )
+  
+  saveRDS(brlmFit2Interaction, file = "brlmFit2Interaction")
+  if(!exists("brlmFit2Interaction")) brlmFit2Interaction <- readRDS("brlmFit2Interaction")
+}
+
+
+
+
 
 
 
 
 # Censored analysis ---- 
 
-bayesVars3 <- c( "Rask_S25OHD", "S25OHD_12kk" , "S25OHD_24kk" , "D25OHD_nmol_l_6to8" , # Toddlerhood, infancy and pre-school.
-                 "ASSQ_6to8_mean", "sukupuoli" , "ikäASSQ" ) 
 
-
-bayesdf3 <- na.exclude( df[ , bayesVars3 ] )
-
-obsVals <- bayesdf3$ASSQ_6to8_mean != 0
-censVals <- bayesdf3$ASSQ_6to8_mean == 0
-
-Covariates3 <- bayesdf3[ , c( "ikäASSQ", "sukupuoli" ) ]
-names(Covariates3) <- c( "Age", "Sex" )
-Covariates3$Age <- scale( Covariates3$Age )
-Covariates3$Sex <- factor( Covariates3$Sex, levels = c(1,2), labels = c("Male", "Female") )
-
-Covariates3_obs <- Covariates3[ obsVals , ]
-Covariates3_cens <- Covariates3[ censVals , ]
-
-Measurements3 <- scale(bayesdf3[ , c( "Rask_S25OHD", "S25OHD_12kk" , 
-                                      "S25OHD_24kk" , "D25OHD_nmol_l_6to8" ) ])
-
-Measurements3_obs <- Measurements3[ obsVals , ]
-Measurements3_cens <- Measurements3[ censVals, ]
-ASSQ <- as.vector(scale( bayesdf2$ASSQ_6to8_mean ))
-
-stan_data3 = list(
+stan_data3 = append(stan_data2,list(
   
-  # D-vitamin variables:
-  Measurements = Measurements3,
-  Nmeasurements = ncol( Measurements3 ),
-  
-  # Covariates:
-  Covariates = Covariates3,
-  NCovariates = ncol( Covariates3 ),
-  
-  # Y outcome:
-  ASSQ = ASSQ,
-  ASSQ_L = min(ASSQ),
-  
-  # N:
-  N = dim(Covariates3)[ 1 ],
-  N_obs = dim( Covariates3_obs )[ 1 ],
-  N_cens = dim( Covariates3_cens )[ 1 ],
-  
-  # Prior parameters:
-  alpha = c( 1, 1, 1, 1 ), # Dirichlet priors.
-  
-  # Expected weights for critical period hypotheses
-  ExpCriticalWeights = list( c( 2/4, 1/4, 1/4, 1/4 ), 
-                             c( 1/4, 2/4, 1/4, 1/4 ), 
-                             c( 1/4, 1/4, 2/4, 1/4 ),
-                             c( 1/4, 1/4, 1/4, 2/4 )),
-  ExpAccumulationWeights = c( 0, 0, 0, 1 ),
-  
+  # Where ASSQ is censored:
+  ASSQ_L = min(scale( bayesdf2$ASSQ_6to8_mean )),
+
   # Is the value zero?
-  zeroVal = as.numeric(censVals)
-  
-)
+  zeroVal = as.numeric(bayesdf2$ASSQ_6to8_mean == 0)
+  )
+  )
 
 # Set up the model:
 
@@ -184,12 +175,31 @@ if(FALSE){ # To prevent sourcing problems.
                     cores = 4 )
   
   saveRDS(brlmFit3, file = "brlmfit3")
-  brlmFit <- readRDS("brlmfit3")
+  if(!exists("brlmFit3")) brlmFit3 <- readRDS("brlmfit3")
 }
+
+# Censored analysis with Interaction ------
+
+if(FALSE){ # To prevent sourcing problems.
+  
+  brlmFit3_Interaction <- stan( file = "BRLM_censored_Interaction.stan", 
+                    data = stan_data3, 
+                    chains = 4, 
+                    iter = 4000, 
+                    cores = 4 )
+  
+  saveRDS(brlmFit3_Interaction, file = "brlmFit3_Interaction")
+  if(!exists("brlmFit3_Interaction")) brlmFit3_Interaction <- readRDS("brlmFit3_Interaction")
+}
+
+
+
+
+
 
 # For PDF summary: --------
 if(FALSE) { # To prevent sourcing problems.
-  
+
   pdf( "Figures/BRLMFigs.pdf" , # Create PDF.
        pointsize = 12, 
        width = 12, 

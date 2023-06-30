@@ -63,11 +63,14 @@ if(FALSE){ # To prevent sourcing problems.
   
   saveRDS(brlmFit, file = "brlmfit")
   if(!exists("brlmFit")) brlmFit <- readRDS("brlmfit")
+  
+  # Check the chains:
+  mcmc_trace(brlmFit, pars = c("Delta", "Coefficients[1]"))
 }
 
-# Check the chains:
 
-mcmc_trace(brlmFit, pars = c("Delta", "Coefficients[1]"))
+
+
 
 
 # 4 measurements --------------
@@ -142,6 +145,8 @@ if(FALSE){ # To prevent sourcing problems.
   
   saveRDS(brlmFit2Interaction, file = "brlmFit2Interaction")
   if(!exists("brlmFit2Interaction")) brlmFit2Interaction <- readRDS("brlmFit2Interaction")
+  
+  
 }
 
 
@@ -246,6 +251,46 @@ if(FALSE) { # To prevent sourcing problems.
     
   }
   par(mfrow = c(1,1))
+  
+  generated_quantities2Int <- extract(brlmFit2Interaction)
+  
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFit2Interaction, 
+              pars = c("Delta","Weights", "Coefficients", "SexInteraction"))$summary[ , c("mean","se_mean", 
+                                                                        "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas(brlmFit2Interaction, pars = c("Delta","SexInteraction", "Coefficients[1]", "Coefficients[2]"))
+  mcmc_areas(brlmFit2Interaction, pars = "EuclideanDistances")
+  
+  par(mfrow = c( 2 , 2 ))
+  hypotheses2 <- c("pregnancy sensitive", "Toddlerhood sensitive", 
+                   "Infancy sensitive", "Childhood sensitive", 
+                   "Accumulation", "Childhood critical")
+  for( i in 1:( ncol( generated_quantities2Int$EuclideanDistances ) ) ){
+    dens <- density( generated_quantities2Int$EuclideanDistances[ , i ] )
+    plot( dens, main = hypotheses2[ i ], xlab = "Distance")
+    meanQuant <- mean(generated_quantities2Int$EuclideanDistances[ , i ])
+    segments(x0 = meanQuant, x1 = meanQuant,
+             y0 = 0, y1 = dens$y[which.min( abs( round(dens$x, 4) - round(meanQuant, 4) ) )])
+    
+  }
+  par(mfrow = c(1,1))
+  
+  dens <- density( generated_quantities2Int$EuclideanDistances[,4] - generated_quantities2Int$EuclideanDistances[,5] ) 
+  plot(dens,
+       main = "Distribution of the difference between childhood sensitive and accumulation distances.",
+       xlab = "Difference in euclidean distance")
+  meanQuant <- mean(generated_quantities2Int$EuclideanDistances[,4] - generated_quantities2Int$EuclideanDistances[,5])
+  modeQuant <- which.max(dens$y)
+  medianQuant <- median(generated_quantities2Int$EuclideanDistances[,4] - generated_quantities2Int$EuclideanDistances[,5])
+  segments(x0 = meanQuant, x1 = meanQuant,
+           y0 = 0, y1 = dens$y[which.min( abs( round(dens$x, 4) - round(meanQuant, 4) ) )])
+  segments(x0 = dens$x[modeQuant], x1 = dens$x[modeQuant],
+           y0 = 0, y1 = dens$y[modeQuant], lty = "dashed")
+  segments(x0 = medianQuant, x1 = medianQuant,
+           y0 = 0, y1 = dens$y[which.min( abs( round(dens$x, 4) - round(medianQuant, 4) ) )], lty = 3)
+  rm(dens, meanQuant, modeQuant, medianQuant)
+  
   
   
   

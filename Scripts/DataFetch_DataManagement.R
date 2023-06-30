@@ -10,8 +10,9 @@ source("Scripts/Libraries.R")
 # Data modifications (if necessary) here:
 
 dataPath2 <- "Z:/psy_vidi/Samuel VIDI 6-8y follow-up/ASSQMaster data - Sakari/ASSQMaster_SakariMod.sav"
+message("Loading data....")
 df <- read_spss(dataPath2)
-
+message("Done.")
 # Remove case 313.
 
 df$id[grep("313", df$id)] # WHO IS IT?

@@ -30,7 +30,7 @@ model {
   Intercept ~ normal(0, .5);
   Weights ~ dirichlet(alpha);
   Delta ~ normal(0, .5);
-  SexInteraction ~ normal(0, .5); // A tight prior for SexInteraction (to help sampling).
+  SexInteraction ~ normal(0, .5); 
   sigma ~ exponential(1);
   for(i in 1:NCovariates){
     Coefficients[i] ~ normal(0, .5); 

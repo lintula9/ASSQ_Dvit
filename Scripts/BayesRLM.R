@@ -111,8 +111,8 @@ if(FALSE){ # To prevent sourcing problems.
   brlmFitC <- stan( file = "BRLM_composite.stan", 
                     data = stan_data3, 
                     chains = 4, 
-                    iter = 2000, 
-                    cores = 4 )
+                    iter = 4000,
+                    cores = 8 )
   
   saveRDS(brlmFitC, file = "brlmFitC")
   if(!exists("brlmFitC")) brlmFitC <- readRDS("brlmFitC")

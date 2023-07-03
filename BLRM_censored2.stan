@@ -1,18 +1,13 @@
 data {
   
   int<lower=0> N;
-
   int<lower=0> NCovariates;
   int<lower=0> Nmeasurements;
-  
   int zeroVal[N];
-  
   matrix[N, Nmeasurements] Measurements;
   matrix[N, NCovariates] Covariates;
-  
   vector[N] ASSQ;
   real<upper=min(ASSQ)> ASSQ_L;
-  
   vector[Nmeasurements] alpha;
   vector[Nmeasurements] ExpSensitiveWeights[Nmeasurements];
   vector[Nmeasurements] ExpAccumulationWeights;
@@ -31,7 +26,6 @@ parameters {
 transformed parameters {
   vector[ N ] Mu;
   Mu = Intercept + Delta * ( Measurements * Weights ) + ( Covariates * Coefficients);
-
 }
 
 model {

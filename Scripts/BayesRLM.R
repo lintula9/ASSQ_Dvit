@@ -112,13 +112,15 @@ if(FALSE){ # To prevent sourcing problems.
                     data = stan_data3, 
                     chains = 4, 
                     iter = 4000,
-                    cores = 8 )
+                    cores = 8)
+                    )
   
   saveRDS(brlmFitC, file = "brlmFitC")
   if(!exists("brlmFitC")) brlmFitC <- readRDS("brlmFitC")
 }
 
-
+print(brlmFitC)
+round(summary(brlmFitC, pars = c("CompBeta", "Loadings"))$summary, 3)
 
 
 

@@ -1,6 +1,6 @@
 # Data fetch and data management.
 
-source("Scripts/Libraries.R")
+source("Scripts/Libraries.R", echo = T)
 
 # Newer data set became avaialable 30.5.
 # 6 to 8 year old data is available.

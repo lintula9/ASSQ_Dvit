@@ -50,9 +50,9 @@ LatentGaussians_All <- Mclust( data = na.omit( df[  , lcavars_6to8Included ] ),
 
 # LCA, stratified by sex. Using all pre 6-8 year data. ---------
 
-LatentGaussians_sexstrat1 <- Mclust( data = na.omit( df[ df$sukupuoli == 1 , lcavars ] ), 
+LatentGaussians_sexstratMal <- Mclust( data = na.omit( df[ df$sukupuoli == 1 , lcavars ] ), 
                            G = 1:6 )
-LatentGaussians_sexstrat2 <- Mclust( data = na.omit( df[ df$sukupuoli == 2 , lcavars ] ), 
+LatentGaussians_sexstratFem <- Mclust( data = na.omit( df[ df$sukupuoli == 2 , lcavars ] ), 
                            G = 1:6 )
 
 
@@ -150,6 +150,17 @@ with(na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_nonapa, "ASSQ_6to8_sum") 
   
   
 })
+
+# LPA with censored data ------
+
+df$Korj_Napa25OHD_censored <- df$Korj_Napa25OHD
+df$Korj_Napa25OHD_censored[df$Korj_Napa25OHD_censored > 250] <- 250
+LatentGaussians_censoredData <- Mclust( data = na.omit( df[ , c(lcavars_nonapa, "Korj_Napa25OHD_censored") ] ), 
+                                     G = 1:6 )
+LatentGaussians_censoredData2g <- Mclust( data = na.omit( df[ , c(lcavars_nonapa, "Korj_Napa25OHD_censored") ] ), 
+                                        G = 2 )
+
+
 
   #
 ########################### Save ############################### 

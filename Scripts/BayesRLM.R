@@ -1,6 +1,6 @@
 # Bayesian Relevant Life-Course Modelling 
 
-# Load data.
+# Load data. ----
 
 if(!exists("package_names")) source("Scripts/Libraries.R")
 if(!exists("dataPath2")) source("Scripts/DataFetch_DataManagement.R")
@@ -9,74 +9,51 @@ if(!exists("dataPath2")) source("Scripts/DataFetch_DataManagement.R")
 
 library(rstan)
 
+
+# Upload models: -----
+if(FALSE) {
+  
+if(!exists("brlmFit")) brlmFit <- readRDS("SaveFiles/brlmfit")
+if(!exists("brlmFit2")) brlmFit2 <- readRDS("SaveFiles/brlmfit2")
+if(!exists("brlmFit2Interaction")) brlmFit2Interaction <- readRDS("SaveFiles/brlmFit2Interaction")
+if(!exists("brlmFit3")) brlmFit3 <- readRDS("SaveFiles/brlmfit3")
+if(!exists("brlmFit3_Interaction")) brlmFit3_Interaction <- readRDS("SaveFiles/brlmFit3_Interaction")
+if(!exists("brlmFitC")) brlmFitC <- readRDS("brlmFitC")
+
+}
+
 # 3 Toddlerhood, infancy, childhood -----
 
-
-# Set up the model:
-
-if(FALSE){ # To prevent sourcing problems.
-
+if(FALSE){ 
   brlmFit <- stan( file = "BRLM.stan", data = stan_data, 
       chains = 4, iter = 2000, cores = 4 )
   
-  saveRDS(brlmFit, file = "brlmfit")
+  saveRDS(brlmFit, file = "SaveFiles/brlmfit")
   if(!exists("brlmFit")) brlmFit <- readRDS("brlmfit")
-  
-  # Check the chains:
-  mcmc_trace(brlmFit, pars = c("Delta", "Coefficients[1]"))
 }
 
 
-
-
-
-
 # 4 measurements --------------
-
-# Set up the model:
-
-if(FALSE){ # To prevent sourcing problems.
-  
+if(FALSE){ 
   brlmFit2 <- stan( file = "BRLM.stan", 
                     data = stan_data2, 
                    chains = 4, iter = 2000, cores = 4 )
   
-  saveRDS(brlmFit2, file = "brlmfit2")
+  saveRDS(brlmFit2, file = "SaveFiles/brlmfit2")
   if(!exists("brlmFit2")) brlmFit2 <- readRDS("brlmfit2")
 }
-
-
-
-
-
-# 4 measurements Interaction --------------
-
-# Set up the model:
-
-if(FALSE){ # To prevent sourcing problems.
+if(FALSE){ 
   
   brlmFit2Interaction <- stan( file = "BRLM_InteractionModel.stan", 
                                data = stan_data2, 
                     chains = 4, iter = 4000, cores = 8 )
   
-  saveRDS(brlmFit2Interaction, file = "brlmFit2Interaction")
+  saveRDS(brlmFit2Interaction, file = "SaveFiles/brlmFit2Interaction")
   if(!exists("brlmFit2Interaction")) brlmFit2Interaction <- readRDS("brlmFit2Interaction")
-  
-  
-}
-
-
-
-
-
-
-
+  }
 
 # Censored analysis ---- 
-
-# Set up the model:
-
-if(FALSE){ # To prevent sourcing problems.
+if(FALSE){ 
   
   brlmFit3 <- stan( file = "BLRM_censored2.stan", 
                     data = stan_data3, 
@@ -84,13 +61,10 @@ if(FALSE){ # To prevent sourcing problems.
                     iter = 2000, 
                     cores = 4 )
   
-  saveRDS(brlmFit3, file = "brlmfit3")
+  saveRDS(brlmFit3, file = "SaveFiles/brlmfit3")
   if(!exists("brlmFit3")) brlmFit3 <- readRDS("brlmfit3")
 }
-
-# Censored analysis with Interaction ------
-
-if(FALSE){ # To prevent sourcing problems.
+if(FALSE){ 
   
   brlmFit3_Interaction <- stan( file = "BRLM_censored_Interaction.stan", 
                     data = stan_data3, 
@@ -98,15 +72,13 @@ if(FALSE){ # To prevent sourcing problems.
                     iter = 4000, 
                     cores = 4 )
   
-  saveRDS(brlmFit3_Interaction, file = "brlmFit3_Interaction")
+  saveRDS(brlmFit3_Interaction, file = "SaveFiles/brlmFit3_Interaction")
   if(!exists("brlmFit3_Interaction")) brlmFit3_Interaction <- readRDS("brlmFit3_Interaction")
 }
 
-
-
 # Composite setting. --------------
 
-if(FALSE){ # To prevent sourcing problems.
+if(FALSE){ 
   
   brlmFitC <- stan( file = "BRLM_composite.stan", 
                     data = stan_data3, 
@@ -115,17 +87,46 @@ if(FALSE){ # To prevent sourcing problems.
                     cores = 8)
                     )
   
-  saveRDS(brlmFitC, file = "brlmFitC")
+  saveRDS(brlmFitC, file = "SaveFiles/brlmFitC")
   if(!exists("brlmFitC")) brlmFitC <- readRDS("brlmFitC")
 }
 
-print(brlmFitC)
-round(summary(brlmFitC, pars = c("CompBeta", "Loadings"))$summary, 3)
+# Napameasures included. -------
+
+if(FALSE){ 
+    
+    brlmFitNapa <- stan( file = "BRLM.stan", 
+                      data = stan_dataNapa, 
+                      chains = 4, 
+                      iter = 4000,
+                      cores = 8)
+    )
+
+  saveRDS(brlmFitNapa, file = "SaveFiles/brlmFitNapa")
+  if(!exists("brlmFitNapa")) brlmFitNapa <- readRDS("brlmFitNapa")
+}
+  
+if(FALSE){ 
+    
+    brlmFitNapaInteraction <- stan( file = "BRLM_InteractionModel.stan", 
+                         data = stan_dataNapa, 
+                         chains = 4, 
+                         iter = 4000,
+                         cores = 8)
+    )
+
+  saveRDS(brlmFitNapaInteraction, file = "SaveFiles/brlmFitNapaInteraction")
+  if(!exists("brlmFitNapaInteraction")) brlmFitNapa <- readRDS("brlmFitNapaInteraction")
+  }
+
+
+  
+  
 
 
 
 # For PDF summary: --------
-if(FALSE) { # To prevent sourcing problems.
+if(FALSE) { 
 
   pdf( "Figures/BRLMFigs.pdf" , # Create PDF.
        pointsize = 12, 
@@ -133,112 +134,65 @@ if(FALSE) { # To prevent sourcing problems.
        height = 12,
        family = "serif" )
   
-  generated_quantities <- extract(brlmFit)
+  # brlmFit:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 3 measures: 12 months (1), 24 months (2) and 6 to 8 years (3)", 
+       cex = 1.5) # Title
+
   grid.arrange(tableGrob(round ( 
     summary ( brlmFit, 
               pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
                                                                         "2.5%","50%","97.5%")], 3), 
     theme = ttheme_minimal()))
-  plot(brlmFit, pars = c("Delta","Weights", "Coefficients"))
-  par(mfrow = c( 2 , 2 ))
+  mcmc_areas(brlmFit, regex_pars = c("Delta","Weights", "Coefficients"), prob = .95)
   hypotheses <- c("Toddlerhood sensitive", "Infancy sensitive", 
-                  "Childhood sensitive", "Childhood critical")
-  for( i in 1:( ncol( generated_quantities$EuclideanDistances ) ) ){
-    dens <- density( generated_quantities$EuclideanDistances[ , i ] )
-    plot( dens, main = hypotheses[ i ], xlab = "Distance")
-    meanQuant <- mean(generated_quantities$EuclideanDistances[ , i ])
-    segments(x0 = meanQuant, x1 = meanQuant,
-             y0 = 0, y1 = dens$y[which.min( abs( round(dens$x, 4) - round(meanQuant, 4) ) )])
-    
-  }
-  par(mfrow = c(1,1))
-  
-  generated_quantities2 <- extract(brlmFit2)
-  
+                  "Childhood sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFit, 
+             regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+
+  # brlmFit2:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 4 measures: Raskaus (1) 12 months (2), 24 months (3) and 6 to 8 years (4)", 
+       cex = 1.5) # Title
+
   grid.arrange(tableGrob(round ( 
     summary ( brlmFit2, 
               pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
                                                                         "2.5%","50%","97.5%")], 3), 
     theme = ttheme_minimal()))
-  plot(brlmFit2, pars = c("Delta","Weights", "Coefficients"))
-  par(mfrow = c( 2 , 2 ))
-  hypotheses2 <- c("pregnancy sensitive", "Toddlerhood sensitive", 
-                   "Infancy sensitive", "Childhood sensitive", "Childhood critical")
-  for( i in 1:( ncol( generated_quantities2$EuclideanDistances ) ) ){
-    dens <- density( generated_quantities2$EuclideanDistances[ , i ] )
-    plot( dens, main = hypotheses2[ i ], xlab = "Distance")
-    meanQuant <- mean(generated_quantities2$EuclideanDistances[ , i ])
-    segments(x0 = meanQuant, x1 = meanQuant,
-             y0 = 0, y1 = dens$y[which.min( abs( round(dens$x, 4) - round(meanQuant, 4) ) )])
-    
-  }
-  par(mfrow = c(1,1))
+  mcmc_areas(brlmFit2, regex_pars = c("Delta","Weights", "Coefficients") , prob = .95)
+  hypotheses <- c("Pregnancy sensitive","Toddlerhood sensitive", "Infancy sensitive", 
+                  "Childhood sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFit2, 
+             regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
   
-  generated_quantities2Int <- extract(brlmFit2Interaction)
+  # brlmFit2 with interaction:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 4 measures, and interaction delta x sex", 
+       cex = 1.5) # Title
   
+
   grid.arrange(tableGrob(round ( 
     summary ( brlmFit2Interaction, 
               pars = c("Delta","Weights", "Coefficients", "SexInteraction"))$summary[ , c("mean","se_mean", 
                                                                         "2.5%","50%","97.5%")], 3), 
     theme = ttheme_minimal()))
-  mcmc_areas(brlmFit2Interaction, pars = c("Delta","SexInteraction", "Coefficients[1]", "Coefficients[2]"))
-  mcmc_areas(brlmFit2Interaction, pars = "EuclideanDistances")
-  
-  par(mfrow = c( 2 , 2 ))
-  hypotheses2 <- c("pregnancy sensitive", "Toddlerhood sensitive", 
-                   "Infancy sensitive", "Childhood sensitive", 
-                   "Accumulation", "Childhood critical")
-  for( i in 1:( ncol( generated_quantities2Int$EuclideanDistances ) ) ){
-    dens <- density( generated_quantities2Int$EuclideanDistances[ , i ] )
-    plot( dens, main = hypotheses2[ i ], xlab = "Distance")
-    meanQuant <- mean(generated_quantities2Int$EuclideanDistances[ , i ])
-    segments(x0 = meanQuant, x1 = meanQuant,
-             y0 = 0, y1 = dens$y[which.min( abs( round(dens$x, 4) - round(meanQuant, 4) ) )])
-    
-  }
-  par(mfrow = c(1,1))
-  
-  dens <- density( generated_quantities2Int$EuclideanDistances[,4] - generated_quantities2Int$EuclideanDistances[,5] ) 
-  plot(dens,
-       main = "Distribution of the difference between childhood sensitive and accumulation distances.",
-       xlab = "Difference in euclidean distance")
-  meanQuant <- mean(generated_quantities2Int$EuclideanDistances[,4] - generated_quantities2Int$EuclideanDistances[,5])
-  modeQuant <- which.max(dens$y)
-  medianQuant <- median(generated_quantities2Int$EuclideanDistances[,4] - generated_quantities2Int$EuclideanDistances[,5])
-  segments(x0 = meanQuant, x1 = meanQuant,
-           y0 = 0, y1 = dens$y[which.min( abs( round(dens$x, 4) - round(meanQuant, 4) ) )])
-  segments(x0 = dens$x[modeQuant], x1 = dens$x[modeQuant],
-           y0 = 0, y1 = dens$y[modeQuant], lty = "dashed")
-  segments(x0 = medianQuant, x1 = medianQuant,
-           y0 = 0, y1 = dens$y[which.min( abs( round(dens$x, 4) - round(medianQuant, 4) ) )], lty = 3)
-  rm(dens, meanQuant, modeQuant, medianQuant)
+  mcmc_areas(brlmFit2Interaction, regex_pars = c("Delta","Weights") , prob = .95)
+  mcmc_areas(brlmFit2Interaction, regex_pars = c("Coefficients", "SexInteraction") , prob = .95)
+  hypotheses <- c("Pregnancy sensitive","Toddlerhood sensitive", "Infancy sensitive", 
+                  "Childhood sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFit2Interaction, 
+             regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
   
   
-  
-  
-  
-  generated_quantities3 <- extract(brlmFit3)
-  
-  grid.arrange(tableGrob(round ( 
-    summary ( brlmFit3, 
-              pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
-                                                                        "2.5%","50%","97.5%")], 3), 
-    theme = ttheme_minimal()))
-  plot(brlmFit3, pars = c("Delta","Weights", "Coefficients"))
-  par(mfrow = c( 2 , 2 ))
-  hypotheses2 <- c("pregnancy sensitive", "Toddlerhood sensitive", 
-                   "Infancy sensitive", "Childhood sensitive", "Childhood critical")
-  for( i in 1:( ncol( generated_quantities3$EuclideanDistances ) ) ){
-    dens <- density( generated_quantities3$EuclideanDistances[ , i ] )
-    plot( dens, main = hypotheses2[ i ], xlab = "Distance")
-    meanQuant <- mean(generated_quantities3$EuclideanDistances[ , i ])
-    segments(x0 = meanQuant, x1 = meanQuant,
-             y0 = 0, y1 = dens$y[which.min( abs( round(dens$x, 4) - round(meanQuant, 4) ) )])
-    
-  }
-  par(mfrow = c(1,1))
-  
-  hist(scale(df$ASSQ_6to8_mean), 
+  # brlmFit3 censored analysis:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 4 measures, censored analysis", 
+       cex = 1.5) # Title
+  {hist(scale(df$ASSQ_6to8_mean), 
        probability = T, 
        xlim = c(-4,4), 
        breaks = 25, 
@@ -251,7 +205,7 @@ if(FALSE) { # To prevent sourcing problems.
                sd = roughSDEst),
          x = seq(-5,5, by = 0.1))
   lines( dnorm(seq(-5,5, by = 0.1), 
-               mean = mean(scale(bayesdf3$ASSQ_6to8_mean)), 
+               mean = mean(scale(bayesdf2$ASSQ_6to8_mean)), 
                sd = 1),
          x = seq(-5,5, by = 0.1), 
          lty = "dashed")
@@ -263,10 +217,88 @@ if(FALSE) { # To prevent sourcing problems.
          cex = 1, 
          y.intersp = 1.5, 
          seg.len = 2, 
-         text.width = .25, x.intersp = .1)
+         text.width = .25, x.intersp = .1)} # Sample dist vs. estimated dist
   
   
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFit3, 
+              pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
+                                                                                          "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas( brlmFit3, regex_pars = c("Delta","Weights", "Coefficients") , prob = .95)
+  hypotheses <- c("Pregnancy sensitive","Toddlerhood sensitive", "Infancy sensitive", 
+                  "Childhood sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFit3, regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
   
-  dev.off()
+  
+  # brlmFit3 censored analysis, with interaction:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 4 measures, censored analysis with interaction", 
+       cex = 1.5) # Title
+
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFit3_Interaction, 
+              pars = c("Delta","Weights", "Coefficients", "SexInteraction"))$summary[ , c("mean","se_mean", 
+                                                                        "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas( brlmFit3_Interaction, regex_pars = c("Delta","Weights") , prob = .95)
+  mcmc_areas( brlmFit3_Interaction, regex_pars = c("Coefficients", "SexInteraction") , prob = .95)
+  
+  hypotheses <- c("Pregnancy sensitive","Toddlerhood sensitive", "Infancy sensitive", 
+                  "Childhood sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFit3_Interaction, regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  
+  # Including napa measures:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 5 measures, including napa", 
+       cex = 1.5) # Title
+  
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFitNapa , 
+              pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
+                                                                        "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas( brlmFitNapa , regex_pars = c("Delta","Weights") , prob = .95)
+  mcmc_areas( brlmFitNapa , regex_pars = c("Coefficients", "SexInteraction") , prob = .95)
+  
+  hypotheses <- c("Pregnancy sensitive","Napa sensitive?","Toddlerhood sensitive", "Infancy sensitive", 
+                  "Childhood sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFitNapa , regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  
+  # Including napa measures and interaction:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 5 measures, interaction included", 
+       cex = 1.5) # Title
+  
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFitNapaInteraction , 
+              pars = c("Delta","Weights", "Coefficients", "SexInteraction"))$summary[ , c("mean","se_mean", 
+                                                                        "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas( brlmFitNapaInteraction , regex_pars = c("Delta","Weights") , prob = .95)
+  mcmc_areas( brlmFitNapaInteraction , regex_pars = c("Coefficients", "SexInteraction") , prob = .95)
+  
+  hypotheses <- c("Pregnancy sensitive","Napa sensitive?","Toddlerhood sensitive", "Infancy sensitive", 
+                  "Childhood sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFitNapaInteraction , regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  
+  # Composite model with 4 measurements:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 4 measures, composite model:\nComposite model uses a weighted sum\n of D-vit measurements and does not require\n same directions for all associations.", 
+       cex = 1.5) # Title
+  
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFitC , 
+              pars = c("CompBeta","ScaledLoadings", "Coefficients"))$summary[ , c("mean","se_mean", 
+                                                                                          "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas( brlmFitC , regex_pars = c("CompBeta", "ScaledLoadings") , prob = .95)
+  mcmc_areas( brlmFitC , regex_pars = c("Coefficients") , prob = .95)
+
+dev.off()
 }
 

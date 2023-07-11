@@ -43,12 +43,13 @@ generated quantities {
   vector[ N ] logLikelihood;
   vector[ N ] yrep;
   vector[ N ] residuals;
-  
+
   for( i in 1:Nmeasurements){
     EuclideanDistances[ i ] = distance( Weights, ExpSensitiveWeights[ i ] );
   }
   EuclideanDistances[ Nmeasurements + 1 ] = distance( Weights, ExpAccumulationWeights );
   EuclideanDistances[ Nmeasurements + 2 ] = distance( Weights, ExpCriticalChildhoodWeights );
+  
   
   for( n in 1:N ) {
     logLikelihood[ n ] = normal_lpdf( ASSQ[ n ] | LinearFunction[ n ], sigma );

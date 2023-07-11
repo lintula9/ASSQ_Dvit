@@ -18,7 +18,7 @@ message("Done.")
 df$id[grep("313", df$id)] # WHO IS IT?
 
 
-# Add cognitive measure availability indicator
+# Add cognitive measure availability indicator --------------
 
 CognitiveAvailable <- strsplit(read_file("IdsWithCognitiveMeasures.txt"), split = "\n")[[1]]
 CognitiveAvailable <- gsub("\r", x = CognitiveAvailable, replacement = "")
@@ -36,7 +36,7 @@ CognitiveAvailable <- df$id %in% CognitiveAvailable
 
 
 
-# Bayesian analysis data:
+# Bayesian analysis data: -------------
 
 bayesVars <- c( "S25OHD_12kk" , "S25OHD_24kk" , "D25OHD_nmol_l_6to8" , # Toddlerhood, infancy and pre-school.
                 "ASSQ_6to8_mean", "sukupuoli" , "ikäASSQ" ) 
@@ -73,9 +73,9 @@ stan_data = list(
   alpha = c( 1, 1, 1 ), # Dirichlet priors.
   
   # Expected weights for critical period hypotheses
-  ExpSensitiveWeights = list( c( 2/3, 1/6, 1/6 ), 
-                             c( 1/6, 2/3, 1/6 ), 
-                             c( 1/6, 1/6, 2/3 ) ),
+  ExpSensitiveWeights = list( c( 1/3, 1/6, 1/6 ), 
+                             c( 1/6, 1/3, 1/6 ), 
+                             c( 1/6, 1/6, 1/3 ) ),
   ExpAccumulationWeights = c( 1/3, 1/3, 1/3 ),
   ExpCriticalChildhoodWeights = c( 0, 0, 1 )
   
@@ -192,4 +192,274 @@ stan_dataNapa = append(stan_dataNapa,list(
   # Is the value zero?
   zeroVal = as.numeric(bayesdfNapa$ASSQ_6to8_mean == 0)
 )
+)
+
+
+
+stan_data123 = list( # Pregnancy (1), 12mo (2), 24mo (3)
+  
+  # D-vitamin variables:
+  Measurements = Measurements2[ , 1:3],
+  Nmeasurements = ncol(Measurements2[ , 1:3]),
+  
+  # Covariates:
+  Covariates = subset( model.matrix(~ Age + Sex, data = Covariates2) , select = -c(`(Intercept)`) ),
+  NCovariates = ncol(Covariates2),
+  
+  # Y outcome:
+  ASSQ = as.vector(scale( bayesdf2$ASSQ_6to8_mean )),
+  
+  # N:
+  N = dim( bayesdf2 )[ 1 ],
+  
+  # Prior parameters:
+  alpha = c( 1, 1, 1 ), # Dirichlet priors.
+  
+  # Expected weights for critical period hypotheses
+  ExpSensitiveWeights = list( c( 2/4, 1/4, 1/4 ), 
+                              c( 1/4, 2/4, 1/4 ), 
+                              c( 1/4, 1/4, 2/4 )),
+  ExpAccumulationWeights = c( 1/3, 1/3, 1/3 ),
+  ExpCriticalChildhoodWeights = c( 0, 0, 0 )
+  
+)
+
+stan_data123 = list( # Pregnancy (1), 12mo (2), 24mo (3)
+  
+  # D-vitamin variables:
+  Measurements = Measurements2[ , 1:3],
+  Nmeasurements = ncol(Measurements2[ , 1:3]),
+  
+  # Covariates:
+  Covariates = subset( model.matrix(~ Age + Sex, data = Covariates2) , select = -c(`(Intercept)`) ),
+  NCovariates = ncol(Covariates2),
+  
+  # Y outcome:
+  ASSQ = as.vector(scale( bayesdf2$ASSQ_6to8_mean )),
+  
+  # N:
+  N = dim( bayesdf2 )[ 1 ],
+  
+  # Prior parameters:
+  alpha = c( 1, 1, 1 ), # Dirichlet priors.
+  
+  # Expected weights for critical period hypotheses
+  ExpSensitiveWeights = list( c( 2/4, 1/4, 1/4 ), 
+                              c( 1/4, 2/4, 1/4 ), 
+                              c( 1/4, 1/4, 2/4 )),
+  ExpAccumulationWeights = c( 1/3, 1/3, 1/3 ),
+  ExpCriticalChildhoodWeights = c( 0, 0, 0 )
+  
+)
+
+stan_data123 = list( # Pregnancy (1), 12mo (2), 24mo (3)
+  
+  # D-vitamin variables:
+  Measurements = Measurements2[ , 1:3],
+  Nmeasurements = ncol(Measurements2[ , 1:3]),
+  
+  # Covariates:
+  Covariates = subset( model.matrix(~ Age + Sex, data = Covariates2) , select = -c(`(Intercept)`) ),
+  NCovariates = ncol(Covariates2),
+  
+  # Y outcome:
+  ASSQ = as.vector(scale( bayesdf2$ASSQ_6to8_mean )),
+  
+  # N:
+  N = dim( bayesdf2 )[ 1 ],
+  
+  # Prior parameters:
+  alpha = c( 1, 1, 1 ), # Dirichlet priors.
+  
+  # Expected weights for critical period hypotheses
+  ExpSensitiveWeights = list( c( 2/4, 1/4, 1/4 ), 
+                              c( 1/4, 2/4, 1/4 ), 
+                              c( 1/4, 1/4, 2/4 )),
+  ExpAccumulationWeights = c( 1/3, 1/3, 1/3 ),
+  ExpCriticalChildhoodWeights = c( 0, 0, 0 )
+  
+)
+
+# Sex stratification:
+
+males <- bayesdf$sukupuoli == 1
+
+stan_data_males = list(
+  
+  # D-vitamin variables:
+  Measurements = matrix(cbind(cbind(
+    scale( bayesdf$S25OHD_12kk ), 
+    scale( bayesdf$S25OHD_24kk )),
+    scale( bayesdf$D25OHD_nmol_l_6to8 )),
+    ncol = 3, 
+    dimnames = list(NULL, c("Toddlerhood", "Infancy", "Childhood")))[ males, ],
+  Nmeasurements = 3,
+  
+  # Covariates:
+  Covariates = subset( model.matrix( ~ Age + Sex, data = Covariates) , select = -c(`(Intercept)`) )[ males, ],
+  NCovariates = ncol(Covariates),
+  
+  # Y outcome:
+  ASSQ = as.vector(scale( bayesdf$ASSQ_6to8_mean ))[ males ],
+  
+  # N:
+  N = dim( bayesdf[males, ] )[ 1 ],
+  
+  # Prior parameters:
+  alpha = c( 1, 1, 1 ), # Dirichlet priors.
+  
+  # Expected weights for critical period hypotheses
+  ExpSensitiveWeights = list( c( 1/3, 1/6, 1/6 ), 
+                              c( 1/6, 1/3, 1/6 ), 
+                              c( 1/6, 1/6, 1/3 ) ),
+  ExpAccumulationWeights = c( 1/3, 1/3, 1/3 ),
+  ExpCriticalChildhoodWeights = c( 0, 0, 1 )
+  
+)
+stan_data_females = list(
+  
+  # D-vitamin variables:
+  Measurements = matrix(cbind(cbind(
+    scale( bayesdf$S25OHD_12kk ), 
+    scale( bayesdf$S25OHD_24kk )),
+    scale( bayesdf$D25OHD_nmol_l_6to8 )),
+    ncol = 3, 
+    dimnames = list(NULL, c("Toddlerhood", "Infancy", "Childhood")))[ !males, ],
+  Nmeasurements = 3,
+  
+  # Covariates:
+  Covariates = subset( model.matrix( ~ Age + Sex, data = Covariates) , select = -c(`(Intercept)`) )[ !males, ],
+  NCovariates = ncol(Covariates),
+  
+  # Y outcome:
+  ASSQ = as.vector(scale( bayesdf$ASSQ_6to8_mean ))[ !males ],
+  
+  # N:
+  N = dim( bayesdf[ !males, ] )[ 1 ],
+  
+  # Prior parameters:
+  alpha = c( 1, 1, 1 ), # Dirichlet priors.
+  
+  # Expected weights for critical period hypotheses
+  ExpSensitiveWeights = list( c( 1/3, 1/6, 1/6 ), 
+                              c( 1/6, 1/3, 1/6 ), 
+                              c( 1/6, 1/6, 1/3 ) ),
+  ExpAccumulationWeights = c( 1/3, 1/3, 1/3 ),
+  ExpCriticalChildhoodWeights = c( 0, 0, 1 )
+  
+)
+
+males2 <- bayesdf2$sukupuoli == 1
+
+stan_data2_males = list(
+  
+  # D-vitamin variables:
+  Measurements = Measurements2[ males2, ],
+  Nmeasurements = ncol(Measurements2),
+  
+  # Covariates:
+  Covariates = subset( model.matrix( ~ Age + Sex, data = Covariates2) , select = -c(`(Intercept)`) )[ males2, ],
+  NCovariates = ncol(Covariates2),
+  
+  # Y outcome:
+  ASSQ = as.vector(scale( bayesdf2$ASSQ_6to8_mean ))[ males2 ],
+  
+  # N:
+  N = dim( bayesdf2[ males2, ] )[ 1 ],
+  
+  # Prior parameters:
+  alpha = c( 1, 1, 1, 1 ), # Dirichlet priors.
+  
+  # Expected weights for critical period hypotheses
+  ExpSensitiveWeights = list( c( 1/3, 1/6, 1/6, 1/6 ), 
+                              c( 1/6, 1/3, 1/6, 1/6 ), 
+                              c( 1/6, 1/6, 1/3, 1/6 ), 
+                              c( 1/6, 1/6, 1/6, 1/3 ) ),
+  ExpAccumulationWeights = c( 1/4, 1/4, 1/4, 1/4 ),
+  ExpCriticalChildhoodWeights = c( 0, 0, 0, 1 )
+  
+)
+stan_data2_females = list(
+  
+  # D-vitamin variables:
+  Measurements = Measurements2[ !males2, ],
+  Nmeasurements = ncol(Measurements2),
+  
+  # Covariates:
+  Covariates = subset( model.matrix( ~ Age + Sex, data = Covariates2) , select = -c(`(Intercept)`) )[ !males2, ],
+  NCovariates = ncol(Covariates2),
+  
+  # Y outcome:
+  ASSQ = as.vector(scale( bayesdf2$ASSQ_6to8_mean ))[ !males2 ],
+  
+  # N:
+  N = dim( bayesdf2[ !males2, ] )[ 1 ],
+  
+  # Prior parameters:
+  alpha = c( 1, 1, 1, 1 ), # Dirichlet priors.
+  
+  # Expected weights for critical period hypotheses
+  ExpSensitiveWeights = list( c( 1/3, 1/6, 1/6, 1/6 ), 
+                              c( 1/6, 1/3, 1/6, 1/6 ), 
+                              c( 1/6, 1/6, 1/3, 1/6 ), 
+                              c( 1/6, 1/6, 1/6, 1/3 ) ),
+  ExpAccumulationWeights = c( 1/4, 1/4, 1/4, 1/4 ),
+  ExpCriticalChildhoodWeights = c( 0, 0, 0, 1 )
+  
+)
+
+stan_data123_males = list( # Pregnancy (1), 12mo (2), 24mo (3)
+  
+  # D-vitamin variables:
+  Measurements = Measurements2[ males2, 1:3],
+  Nmeasurements = ncol(Measurements2[ males2, 1:3]),
+  
+  # Covariates:
+  Covariates = subset( model.matrix(~ Age + Sex, data = Covariates2) , select = -c(`(Intercept)`) )[ males2 ,],
+  NCovariates = ncol(Covariates2),
+  
+  # Y outcome:
+  ASSQ = as.vector(scale( bayesdf2$ASSQ_6to8_mean ))[ males2 ],
+  
+  # N:
+  N = dim( bayesdf2[ males2, ] )[ 1 ],
+  
+  # Prior parameters:
+  alpha = c( 1, 1, 1 ), # Dirichlet priors.
+  
+  # Expected weights for critical period hypotheses
+  ExpSensitiveWeights = list( c( 2/4, 1/4, 1/4 ), 
+                              c( 1/4, 2/4, 1/4 ), 
+                              c( 1/4, 1/4, 2/4 )),
+  ExpAccumulationWeights = c( 1/3, 1/3, 1/3 ),
+  ExpCriticalChildhoodWeights = c( 0, 0, 0 )
+  
+)
+
+stan_data123_females = list( # Pregnancy (1), 12mo (2), 24mo (3)
+  
+  # D-vitamin variables:
+  Measurements = Measurements2[ !males2, 1:3],
+  Nmeasurements = ncol(Measurements2[ !males2, 1:3]),
+  
+  # Covariates:
+  Covariates = subset( model.matrix(~ Age + Sex, data = Covariates2) , select = -c(`(Intercept)`) )[ !males2 ,],
+  NCovariates = ncol(Covariates2),
+  
+  # Y outcome:
+  ASSQ = as.vector(scale( bayesdf2$ASSQ_6to8_mean ))[ !males2 ],
+  
+  # N:
+  N = dim( bayesdf2[ !males2, ] )[ 1 ],
+  
+  # Prior parameters:
+  alpha = c( 1, 1, 1 ), # Dirichlet priors.
+  
+  # Expected weights for critical period hypotheses
+  ExpSensitiveWeights = list( c( 2/4, 1/4, 1/4 ), 
+                              c( 1/4, 2/4, 1/4 ), 
+                              c( 1/4, 1/4, 2/4 )),
+  ExpAccumulationWeights = c( 1/3, 1/3, 1/3 ),
+  ExpCriticalChildhoodWeights = c( 0, 0, 0 )
+  
 )

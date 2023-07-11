@@ -31,7 +31,20 @@ if(FALSE){
   saveRDS(brlmFit, file = "SaveFiles/brlmfit")
   if(!exists("brlmFit")) brlmFit <- readRDS("brlmfit")
 }
-
+if(FALSE){ 
+  brlmFit_males <- stan( file = "BRLM.stan", data = stan_data_males, 
+                   chains = 4, iter = 2000, cores = 4 )
+  
+  saveRDS(brlmFit_males, file = "SaveFiles/brlmFit_males")
+  if(!exists("brlmFit_males")) brlmFit_males <- readRDS("brlmFit_males")
+}
+if(FALSE){ 
+  brlmFit_females <- stan( file = "BRLM.stan", data = stan_data_females, 
+                   chains = 4, iter = 2000, cores = 4 )
+  
+  saveRDS(brlmFit_females, file = "SaveFiles/brlmFit_females")
+  if(!exists("brlmFit_females")) brlmFit_females <- readRDS("brlmFit_females")
+}
 
 # 4 measurements --------------
 if(FALSE){ 
@@ -43,6 +56,21 @@ if(FALSE){
   if(!exists("brlmFit2")) brlmFit2 <- readRDS("brlmfit2")
 }
 if(FALSE){ 
+  brlmFit2_males <- stan( file = "BRLM.stan", data = stan_data2_males, 
+                         chains = 4, iter = 2000, cores = 4 )
+  
+  saveRDS(brlmFit2_males, file = "SaveFiles/brlmFit2_males")
+  if(!exists("brlmFit2_males")) brlmFit_males <- readRDS("brlmFit2_males")
+}
+if(FALSE){ 
+  brlmFit2_females <- stan( file = "BRLM.stan", data = stan_data2_females, 
+                           chains = 4, iter = 2000, cores = 4 )
+  
+  saveRDS(brlmFit2_females, file = "SaveFiles/brlmFit2_females")
+  if(!exists("brlmFit2_females")) brlmFit2_females <- readRDS("brlmFit2_females")
+}
+
+if(FALSE){ 
   
   brlmFit2Interaction <- stan( file = "BRLM_InteractionModel.stan", 
                                data = stan_data2, 
@@ -51,6 +79,42 @@ if(FALSE){
   saveRDS(brlmFit2Interaction, file = "SaveFiles/brlmFit2Interaction")
   if(!exists("brlmFit2Interaction")) brlmFit2Interaction <- readRDS("brlmFit2Interaction")
   }
+# Rask, 12mo, 24mo  -------
+
+if(FALSE){ 
+  
+  brlmFit_123 <- stan( file = "BRLM.stan", 
+                       data = stan_data123, 
+                       chains = 4, 
+                       iter = 4000,
+                       cores = 8)
+
+saveRDS(brlmFit_123, file = "SaveFiles/brlmFit_123")
+if(!exists("brlmFit_123")) brlmFit_123 <- readRDS("brlmFit_123")
+}
+if(FALSE){ 
+  
+  brlmFit_123_males <- stan( file = "BRLM.stan", 
+                       data = stan_data123_males, 
+                       chains = 4, 
+                       iter = 4000,
+                       cores = 8)
+
+saveRDS(brlmFit_123_males, file = "SaveFiles/brlmFit_123_males")
+if(!exists("brlmFit_123_males")) brlmFit_123_males <- readRDS("brlmFit_123_males")
+}
+if(FALSE){ 
+  
+  brlmFit_123_females <- stan( file = "BRLM.stan", 
+                       data = stan_data123_females, 
+                       chains = 4, 
+                       iter = 4000,
+                       cores = 8)
+
+saveRDS(brlmFit_123_females, file = "SaveFiles/brlmFit_123_females")
+if(!exists("brlmFit_123_females")) brlmFit_123_females <- readRDS("brlmFit_123_females")
+}
+
 
 # Censored analysis ---- 
 if(FALSE){ 
@@ -85,7 +149,6 @@ if(FALSE){
                     chains = 4, 
                     iter = 4000,
                     cores = 8)
-                    )
   
   saveRDS(brlmFitC, file = "SaveFiles/brlmFitC")
   if(!exists("brlmFitC")) brlmFitC <- readRDS("brlmFitC")
@@ -100,7 +163,6 @@ if(FALSE){
                       chains = 4, 
                       iter = 4000,
                       cores = 8)
-    )
 
   saveRDS(brlmFitNapa, file = "SaveFiles/brlmFitNapa")
   if(!exists("brlmFitNapa")) brlmFitNapa <- readRDS("brlmFitNapa")
@@ -113,14 +175,14 @@ if(FALSE){
                          chains = 4, 
                          iter = 4000,
                          cores = 8)
-    )
 
   saveRDS(brlmFitNapaInteraction, file = "SaveFiles/brlmFitNapaInteraction")
   if(!exists("brlmFitNapaInteraction")) brlmFitNapa <- readRDS("brlmFitNapaInteraction")
   }
 
 
-  
+
+
   
 
 
@@ -150,6 +212,7 @@ if(FALSE) {
                   "Accumulative",  "Childhood critical")
   mcmc_areas(brlmFit, 
              regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit)
 
   # brlmFit2:
   plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
@@ -167,6 +230,7 @@ if(FALSE) {
                   "Accumulative",  "Childhood critical")
   mcmc_areas(brlmFit2, 
              regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit2)
   
   # brlmFit2 with interaction:
   plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
@@ -186,8 +250,143 @@ if(FALSE) {
                   "Accumulative",  "Childhood critical")
   mcmc_areas(brlmFit2Interaction, 
              regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit2Interaction)
+  # brlmFit123, Raskaus, 12mo, 24mo:
+  
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 3 measures, raskaus, 1-year, 2-year", 
+       cex = 1.5) # Title
   
   
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFit_123, 
+              pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
+                                                                                          "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas(brlmFit_123, regex_pars = c("Delta","Weights") , prob = .95)
+  mcmc_areas(brlmFit_123, regex_pars = c("Coefficients", "SexInteraction") , prob = .95)
+  hypotheses <- c("Pregnancy sensitive","Toddlerhood sensitive", "Infancy sensitive",
+                  "Accumulative", "Childhood critical")
+  mcmc_areas(brlmFit2Interaction, 
+             regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit_123)
+  
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"Sex stratified BRLMs.", 
+       cex = 1.5) # Title
+  # Sex stratified analyses...
+  # brlmFit male:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 3 measures: 12 months (1), 24 months (2) and 6 to 8 years (3)\nmales only", 
+       cex = 1.5) # Title
+  
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFit_males, 
+              pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
+                                                                        "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas(brlmFit_males, regex_pars = c("Delta","Weights", "Coefficients"), prob = .95)
+  hypotheses <- c("Toddlerhood sensitive", "Infancy sensitive", 
+                  "Childhood sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFit_males, 
+             regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit_males)
+  
+  # brlmFit females:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 3 measures: 12 months (1), 24 months (2) and 6 to 8 years (3)\nfemales only", 
+       cex = 1.5) # Title
+  
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFit_females, 
+              pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
+                                                                        "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas(brlmFit_females, regex_pars = c("Delta","Weights", "Coefficients"), prob = .95)
+  hypotheses <- c("Toddlerhood sensitive", "Infancy sensitive", 
+                  "Childhood sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFit_females, 
+             regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit_females)
+  
+  # brlmFit2 male:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 4 measures: rask (1), 12 months (2), 24 months (3) and 6 to 8 year (4)\nmales only", 
+       cex = 1.5) # Title
+  
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFit2_males, 
+              pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
+                                                                        "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas(brlmFit2_males, regex_pars = c("Delta","Weights", "Coefficients"), prob = .95)
+  hypotheses <- c("Pregnancy sensitive", "Toddlerhood sensitive", 
+                  "Infancy sensitive", "Childhood sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFit2_males, 
+             regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit2_males)
+  
+  # brlmFit2 females:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 4 measures: rask (1), 12 months (2), 24 months (3) and 6 to 8 year (4)\nfemales only", 
+       cex = 1.5) # Title
+  
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFit2_females, 
+              pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
+                                                                        "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas(brlmFit2_females, regex_pars = c("Delta","Weights", "Coefficients"), prob = .95)
+  hypotheses <- c("Pregnancy sensitive", "Toddlerhood sensitive", 
+                  "Infancy sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFit2_females, 
+             regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit2_females)
+  
+  # brlmFit123 male:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 3 measures: rask (1), 12 months (2) and 24 months (3)\nmales only", 
+       cex = 1.5) # Title
+  
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFit_123_males, 
+              pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
+                                                                        "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas(brlmFit_123_males, regex_pars = c("Delta","Weights", "Coefficients"), prob = .95)
+  hypotheses <- c("Pregnancy sensitive", "Toddlerhood sensitive", 
+                  "Infancy sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFit_123_males, 
+             regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit_123_males)
+  
+  # brlmFit123 females:
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"BRLM with 3 measures: rask (1), 12 months (2) and 24 months (3)\nfemales only", 
+       cex = 1.5) # Title
+  
+  grid.arrange(tableGrob(round ( 
+    summary ( brlmFit_123_females, 
+              pars = c("Delta","Weights", "Coefficients"))$summary[ , c("mean","se_mean", 
+                                                                        "2.5%","50%","97.5%")], 3), 
+    theme = ttheme_minimal()))
+  mcmc_areas(brlmFit_123_females, regex_pars = c("Delta","Weights", "Coefficients"), prob = .95)
+  hypotheses <- c("Pregnancy sensitive", "Toddlerhood sensitive", 
+                  "Infancy sensitive",
+                  "Accumulative",  "Childhood critical")
+  mcmc_areas(brlmFit_123_females, 
+             regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit_123_females)
+  
+  # Break
+  plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
+  text(0,0,"Some extras.", 
+       cex = 1.5) # Title
   # brlmFit3 censored analysis:
   plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
   text(0,0,"BRLM with 4 measures, censored analysis", 
@@ -230,6 +429,7 @@ if(FALSE) {
                   "Childhood sensitive",
                   "Accumulative",  "Childhood critical")
   mcmc_areas(brlmFit3, regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit3)
   
   
   # brlmFit3 censored analysis, with interaction:
@@ -249,6 +449,7 @@ if(FALSE) {
                   "Childhood sensitive",
                   "Accumulative",  "Childhood critical")
   mcmc_areas(brlmFit3_Interaction, regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFit3_Interaction)
   
   # Including napa measures:
   plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
@@ -267,6 +468,7 @@ if(FALSE) {
                   "Childhood sensitive",
                   "Accumulative",  "Childhood critical")
   mcmc_areas(brlmFitNapa , regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFitNapa)
   
   # Including napa measures and interaction:
   plot(0,0,type = "n", axes = F, xlab = "", ylab = "")
@@ -285,6 +487,7 @@ if(FALSE) {
                   "Childhood sensitive",
                   "Accumulative",  "Childhood critical")
   mcmc_areas(brlmFitNapaInteraction , regex_pars = "EuclideanDistances", prob = .95) + scale_y_discrete(labels = hypotheses)
+  SensVsAccPlot(brlmFitNapaInteraction)
   
   # Composite model with 4 measurements:
   plot(0,0,type = "n", axes = F, xlab = "", ylab = "")

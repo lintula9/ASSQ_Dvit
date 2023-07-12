@@ -208,7 +208,7 @@ for(i in modelSaveNames) {
   fit <- as.list(.GlobalEnv)[[ i ]]
 
   plot(0,0, type = "n", ylab="", xlab ="", axes = F)
-  text(0,0, i)
+  text(0,0, attr(fit, "Desc"))
   
   plot( fit , "classification")
   plot( fit , "BIC")

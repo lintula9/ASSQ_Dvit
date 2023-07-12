@@ -30,47 +30,57 @@ ggpairs(na.omit( df[ , c(lcavars,"sukupuoli") ] ),
 
 LatentGaussians <- Mclust( data = na.omit( df[ , lcavars ] ), 
                           G = 1:6 )
-defaultPrior( data = na.omit( df[ , lcavars ] ) , # Check and change the prior.
-              G = 2, modelName = "VVV" ) 
-
+attr(LatentGaussians, "Desc") <- "Rask, napap, 12mo, 24mo."
 
 LatentGaussians_2group <- Mclust( data = na.omit( df[ , lcavars ] ), 
                            G = 2 )
+attr(LatentGaussians_2group, "Desc") <- "Rask, napa, 12mo, 24mo - forced to 2 groups."
 
 # LCA without Napa25OHD; pre 6 to 8 year ------------
 
 LatentGaussians_NoNapa <- Mclust( data = na.omit( df[ , lcavars_nonapa ] ), 
                                  G = 1:6 )
-
+attr(LatentGaussians_NoNapa, "Desc") <- "Rask, 12mo, 24mo."
 # LCA with 6-8 year measurements included --------------
 
 LatentGaussians_All <- Mclust( data = na.omit( df[  , lcavars_6to8Included ] ), 
                                G = 1:6 )   # Runs into missing data problems: only 224 available.
-
+LatentGaussians_6to8_nonapa <- Mclust( data = na.omit( df[  , c(lcavars_6to8Included[ -2 ]) ] ), 
+                                       G = 1:6 )
+attr(LatentGaussians_All, "Desc") <- "Rask, napa, 12mo, 24mo, 6 to 8."
+attr(LatentGaussians_6to8_nonapa, "Desc") <- "Rask, 12mo, 24mo, 6 to 8."
 
 # LCA, stratified by sex. Using all pre 6-8 year data. ---------
 
 LatentGaussians_sexstratMal <- Mclust( data = na.omit( df[ df$sukupuoli == 1 , lcavars ] ), 
                            G = 1:6 )
+attr(LatentGaussians_sexstratMal, "Desc") <- "Males only\nRask, napa, 12mo, 24mo."
 LatentGaussians_sexstratFem <- Mclust( data = na.omit( df[ df$sukupuoli == 2 , lcavars ] ), 
                            G = 1:6 )
+attr(LatentGaussians_sexstratMal, "Desc") <- "Females only\nRask, napa, 12mo, 24mo."
 
 
 # LCA, including cases with ASSQ scores available, using 4 measuremnets (no 6 to 8 year measure) -----
 
 LatentGaussians_OnlyWith_ASSQavailable <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars ] ), 
                                G = 1:6 )
+attr(LatentGaussians_OnlyWith_ASSQavailable, "Desc") <- "Only if ASSQ not NA\nRask, napa, 12mo, 24mo."
+
 
 # LCA, including cases with ASSQ scores available, using 3 measuremnets (no 6 to 8 year measure) -----
 
 LatentGaussians_OnlyWith_ASSQavailable_3measures <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars_nonapa ] ), 
                                                   G = 1:6 )
+attr(LatentGaussians_OnlyWith_ASSQavailable_3measures, "Desc") <- "Only if ASSQ not NA\nRask, 12mo, 24mo."
+
 
 # LCA, including cases with ASSQ scores available, forcing 2 groups.
 LatentGaussians_OnlyWith_ASSQavailable_2group <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars ] ), 
                                                   G = 2 )
 LatentGaussians_OnlyWith_ASSQavailable_2group_nonapa <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars_nonapa ] ), 
                                                          G = 2 )
+attr(LatentGaussians_OnlyWith_ASSQavailable_2group, "Desc") <- "Only if ASSQ not NA\nRask, napa, 12mo, 24mo.\nForced to 2 group."
+attr(LatentGaussians_OnlyWith_ASSQavailable_2group_nonapa, "Desc") <- "Only if ASSQ not NA\nRask, 12mo, 24mo.\nForced to 2 group."
 
 # Save classification results into df as variables.
 
@@ -90,7 +100,7 @@ attr(df$LDvitProfile_NoNapa_to_2year_ASSQcases , "format.spss") <- "F12.1"
 if ( FALSE ) {
 # Print confusion matrix
 
-table(df$LDvitProfile_NoNapa_to_2year, df$LDvitProfile_NoNapa_to_2year_ASSQcases) # confusion matrix
+table( df$LDvitProfile_NoNapa_to_2year, df$LDvitProfile_NoNapa_to_2year_ASSQcases ) # confusion matrix
 
 # Log likelihood comparisons using the two estimated normals :
 
@@ -129,10 +139,11 @@ par(mfrow = c(1,1))
 
 }
 
-  # Simultaneous modelling of ASSQ and S25OHD
+  # Simultaneous modelling of ASSQ and S25OHD -----
 
 LatentGaussians_Simultaneous_ASSQ <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_nonapa, "ASSQ_6to8_sum") ] ), 
                                              G = 2 )
+
 with(na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_nonapa, "ASSQ_6to8_sum") ] ) , expr = {
   
   par(mfrow = c(2,2))
@@ -151,15 +162,42 @@ with(na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_nonapa, "ASSQ_6to8_sum") 
   
 })
 
+LatentGaussians_Simultaneous_ASSQ_12_24_6to8 <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_6to8Included[-(1:2)], "ASSQ_6to8_sum") ] ), 
+                                             G = 1:3 )
+
+with(na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_6to8Included[-(1:2)], "ASSQ_6to8_sum") ] ) , expr = {
+  
+  par(mfrow = c(2,2))
+  
+  matplot(LatentGaussians_Simultaneous_ASSQ_12_24_6to8$parameters$mean[1:3,], type = "b")
+  hist(ASSQ_6to8_sum[LatentGaussians_Simultaneous_ASSQ_12_24_6to8$classification == 1], col = cols[1], 
+       main = "", breaks = seq(from = 0, to = 30, by = 2), freq = F, xlab = "", ylab = "", xlim = c(0,30))
+  lines(density(ASSQ_6to8_sum[LatentGaussians_Simultaneous_ASSQ_12_24_6to8$classification == 1]), col = cols[1], main = "")
+  hist(ASSQ_6to8_sum[LatentGaussians_Simultaneous_ASSQ_12_24_6to8$classification == 2], col = cols[2],
+       main = "", breaks = seq(from = 0, to = 30, by = 2), freq = F, xlab = "", xlim = c(0,30))
+  lines(density(ASSQ_6to8_sum[LatentGaussians_Simultaneous_ASSQ_12_24_6to8$classification == 2]), col = cols[2], main = "")
+  
+  par(mfrow = c(1,1))
+  
+  
+  
+})
 # LPA with censored data ------
 
 df$Korj_Napa25OHD_censored <- df$Korj_Napa25OHD
 df$Korj_Napa25OHD_censored[df$Korj_Napa25OHD_censored > 250] <- 250
 LatentGaussians_censoredData <- Mclust( data = na.omit( df[ , c(lcavars_nonapa, "Korj_Napa25OHD_censored") ] ), 
                                      G = 1:6 )
+attr(LatentGaussians_censoredData, "Desc") <- "Censored data\nRask, 12mo, 24mo, 6 to 8."
 LatentGaussians_censoredData2g <- Mclust( data = na.omit( df[ , c(lcavars_nonapa, "Korj_Napa25OHD_censored") ] ), 
                                         G = 2 )
+attr(LatentGaussians_censoredData2g, "Desc") <- "Censored data\nRask, 12mo, 24mo, 6 to 8.\n Forced to 2 groups."
 
+# LPA with 12mo, 24mo, 6to8 -----
+
+LatentGaussians_1_2_6to8 <- Mclust( data = na.omit( df[  , lcavars_6to8Included[ -c(1,2) ] ] ), 
+                               G = 1:6 )
+attr(LatentGaussians_1_2_6to8, "Desc") <- "12mo, 24mo, 6 to 8 years."
 
 
   #
@@ -171,3 +209,18 @@ writepath <- "Z:/psy_vidi/Samuel VIDI 6-8y follow-up/ASSQMaster data - Sakari/AS
 write_sav(df, writepath)
 
 }
+
+
+# Regressions ------
+
+
+with(df[ which(df$id %in% na.omit( df[ , c("id", lcavars_6to8Included[ -(1:2) ])] )$id) ,  ], {
+  classific <- factor(as.list(.GlobalEnv)$LatentGaussians_1_2_6to8$classification)
+  summary(lm( ASSQ_6to8_mean ~ classific ))
+  } )
+
+
+with(df[ which(df$id %in% na.omit( df[ , c("id", lcavars_6to8Included[ -(2) ])] )$id) ,  ], {
+  classific <- factor(as.list(.GlobalEnv)$LatentGaussians_6to8_nonapa$classification)
+  summary(lm( ASSQ_6to8_mean ~ classific ))
+} )

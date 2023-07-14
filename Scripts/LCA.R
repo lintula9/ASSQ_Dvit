@@ -57,7 +57,8 @@ LatentGaussians_sexstratMal <- Mclust( data = na.omit( df[ df$sukupuoli == 1 , l
 attr(LatentGaussians_sexstratMal, "Desc") <- "Males only\nRask, napa, 12mo, 24mo."
 LatentGaussians_sexstratFem <- Mclust( data = na.omit( df[ df$sukupuoli == 2 , lcavars ] ), 
                            G = 1:6 )
-attr(LatentGaussians_sexstratMal, "Desc") <- "Females only\nRask, napa, 12mo, 24mo."
+attr(LatentGaussians_sexstratMal, "Desc") <- "Males only\nRask, napa, 12mo, 24mo."
+attr(LatentGaussians_sexstratFem, "Desc") <- "Females only\nRask, napa, 12mo, 24mo."
 
 
 # LCA, including cases with ASSQ scores available, using 4 measuremnets (no 6 to 8 year measure) -----
@@ -143,6 +144,7 @@ par(mfrow = c(1,1))
 
 LatentGaussians_Simultaneous_ASSQ <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_nonapa, "ASSQ_6to8_sum") ] ), 
                                              G = 2 )
+attr(LatentGaussians_Simultaneous_ASSQ, "Desc") <- "Simultaneous estimation of latent groups\nwith D-vitmain levels and ASSQ\n"
 
 with(na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_nonapa, "ASSQ_6to8_sum") ] ) , expr = {
   
@@ -164,6 +166,7 @@ with(na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_nonapa, "ASSQ_6to8_sum") 
 
 LatentGaussians_Simultaneous_ASSQ_12_24_6to8 <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_6to8Included[-(1:2)], "ASSQ_6to8_sum") ] ), 
                                              G = 1:3 )
+attr(LatentGaussians_Simultaneous_ASSQ_12_24_6to8, "Desc") <- "Simultaneous ASSQ and d-vit\n12mo, 24mo, 6 to 8."
 
 with(na.omit( df[ !is.na(df$ASSQ_6to8_sum) , c(lcavars_6to8Included[-(1:2)], "ASSQ_6to8_sum") ] ) , expr = {
   

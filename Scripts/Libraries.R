@@ -4,7 +4,8 @@ package_names <- c("haven", "ggplot2", "mclust",
                    "mixtools", "flexmix", "mice",
                    "GGally", "gridExtra", "scales",
                    "tidyverse", "MASS", "mvtnorm",
-                   "rstan", "RColorBrewer", "bayesplot")
+                   "rstan", "RColorBrewer", "bayesplot",
+                   "emmeans")
 
 for (i in package_names){
   if ( !requireNamespace( i, 

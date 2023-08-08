@@ -239,3 +239,32 @@ with(df[ which(df$id %in% na.omit( df[ , c("id", lcavars_6to8Included[ -(2) ])] 
 summary(lm( df,
     formula = ASSQ_6to8_mean ~ LDvitProfile_NoNapa_to_8year))
 
+summary(lm( df[df$sukupuoli == 1, ],
+            formula = ASSQ_6to8_mean ~ LDvitProfile_NoNapa_to_8year)) # Males
+summary(lm( df[df$sukupuoli == 2, ],
+            formula = ASSQ_6to8_mean ~ LDvitProfile_NoNapa_to_8year)) # Females
+summary(lm( df,
+            formula = ASSQ_6to8_mean ~ LDvitProfile_NoNapa_to_8year * factor(sukupuoli))) # Interaction
+summary(lm( df,
+            formula = ASSQ_6to8_mean ~ 
+              LDvitProfile_NoNapa_to_8year * factor(sukupuoli) + 
+              factor(äidinkoulutus))) # Interaction and SES contrl
+summary(lm( df,
+            formula = ASSQ_6to8_mean ~ 
+              LDvitProfile_NoNapa_to_8year * factor(sukupuoli) + 
+              factor(äidinkoulutus) + 
+              factor(isankoulutus))) # Interaction and SES contrl
+emmeans(lm( df,
+            formula = scale(ASSQ_6to8_sum) ~ 
+              LDvitProfile_NoNapa_to_8year * factor(sukupuoli) + 
+              factor(äidinkoulutus) + 
+              factor(isankoulutus)), specs = "LDvitProfile_NoNapa_to_8year")
+hist(df$ASSQ_6to8_mean)
+plot(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 2, ]$ASSQ_6to8_sum)), col = "blue")
+lines(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 1, ]$ASSQ_6to8_sum)), col = "red")
+
+
+
+
+
+

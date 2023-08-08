@@ -47,8 +47,11 @@ LatentGaussians_All <- Mclust( data = na.omit( df[  , lcavars_6to8Included ] ),
                                G = 1:6 )   # Runs into missing data problems: only 224 available.
 LatentGaussians_6to8_nonapa <- Mclust( data = na.omit( df[  , c(lcavars_6to8Included[ -2 ]) ] ), 
                                        G = 1:6 )
-attr(LatentGaussians_All, "Desc") <- "Rask, napa, 12mo, 24mo, 6 to 8."
-attr(LatentGaussians_6to8_nonapa, "Desc") <- "Rask, 12mo, 24mo, 6 to 8."
+df$LDvitProfile_NoNapa_to_8year <- NA
+df[ which( df$id %in% na.exclude(df[ , c(lcavars_6to8Included[ -2 ], "id" ) ])$id ) , ]$LDvitProfile_NoNapa_to_8year <- LatentGaussians_6to8_nonapa$classification
+attr(df$LDvitProfile_NoNapa_to_8year , "label") <- "Latent profile indicator; when using no napa measurement"
+attr(df$LDvitProfile_NoNapa_to_8year , "format.spss") <- "F12.1"
+
 
 # LCA, stratified by sex. Using all pre 6-8 year data. ---------
 
@@ -227,3 +230,12 @@ with(df[ which(df$id %in% na.omit( df[ , c("id", lcavars_6to8Included[ -(2) ])] 
   classific <- factor(as.list(.GlobalEnv)$LatentGaussians_6to8_nonapa$classification)
   summary(lm( ASSQ_6to8_mean ~ classific ))
 } )
+
+with(df[ which(df$id %in% na.omit( df[ , c("id", lcavars_6to8Included[ -(2) ])] )$id) ,  ], {
+  classific <- factor(as.list(.GlobalEnv)$LatentGaussians_6to8_nonapa$classification)
+  summary(lm( ASSQ_6to8_mean ~ classific ))
+} )
+
+summary(lm( df,
+    formula = ASSQ_6to8_mean ~ LDvitProfile_NoNapa_to_8year))
+

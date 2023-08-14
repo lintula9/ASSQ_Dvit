@@ -47,6 +47,7 @@ LatentGaussians_All <- Mclust( data = na.omit( df[  , lcavars_6to8Included ] ),
                                G = 1:6 )   # Runs into missing data problems: only 224 available.
 LatentGaussians_6to8_nonapa <- Mclust( data = na.omit( df[  , c(lcavars_6to8Included[ -2 ]) ] ), 
                                        G = 1:6 )
+attr(LatentGaussians_6to8_nonapa, "Desc") <- "Rask, 12mo, 24mo, 6to8years"
 df$LDvitProfile_NoNapa_to_8year <- NA
 df[ which( df$id %in% na.exclude(df[ , c(lcavars_6to8Included[ -2 ], "id" ) ])$id ) , ]$LDvitProfile_NoNapa_to_8year <- LatentGaussians_6to8_nonapa$classification
 attr(df$LDvitProfile_NoNapa_to_8year , "label") <- "Latent profile indicator; when using no napa measurement"
@@ -250,15 +251,15 @@ summary(lm( df,
               LDvitProfile_NoNapa_to_8year * factor(sukupuoli) + 
               factor(äidinkoulutus))) # Interaction and SES contrl
 summary(lm( df,
-            formula = ASSQ_6to8_mean ~ 
-              LDvitProfile_NoNapa_to_8year * factor(sukupuoli) + 
+            formula = scale(ASSQ_6to8_mean) ~ 
+              factor(LDvitProfile_NoNapa_to_8year) * factor(sukupuoli) + 
               factor(äidinkoulutus) + 
               factor(isankoulutus))) # Interaction and SES contrl
 emmeans(lm( df,
             formula = scale(ASSQ_6to8_sum) ~ 
-              LDvitProfile_NoNapa_to_8year * factor(sukupuoli) + 
+              factor(LDvitProfile_NoNapa_to_8year) * factor(sukupuoli) + 
               factor(äidinkoulutus) + 
-              factor(isankoulutus)), specs = "LDvitProfile_NoNapa_to_8year")
+              factor(isankoulutus)), specs = "LDvitProfile_NoNapa_to_8year", )
 hist(df$ASSQ_6to8_mean)
 plot(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 2, ]$ASSQ_6to8_sum)), col = "blue")
 lines(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 1, ]$ASSQ_6to8_sum)), col = "red")

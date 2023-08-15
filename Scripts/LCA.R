@@ -259,7 +259,7 @@ emmeans(lm( df,
             formula = scale(ASSQ_6to8_sum) ~ 
               factor(LDvitProfile_NoNapa_to_8year) * factor(sukupuoli) + 
               factor(äidinkoulutus) + 
-              factor(isankoulutus)), specs = "LDvitProfile_NoNapa_to_8year", )
+              factor(isankoulutus)), specs = c("LDvitProfile_NoNapa_to_8year", "sukupuoli"), )
 hist(df$ASSQ_6to8_mean)
 plot(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 2, ]$ASSQ_6to8_sum)), col = "blue")
 lines(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 1, ]$ASSQ_6to8_sum)), col = "red")

@@ -25,11 +25,10 @@ CognitiveAvailable <- gsub("\r", x = CognitiveAvailable, replacement = "")
 CognitiveAvailable <- df$id %in% CognitiveAvailable
 
 
+cognitive_data <- "Z:/psy_vidi/Data 6 to 8 yrs/Cognitive tests/Cognitive tests data/Data_cognitive_2excluded__3subjects_excluded_combined_S25OHD_Finnish_speaking.sav"
+df_cognitive <- read_spss(cognitive_data)
 
-
-
-
-
+df <- left_join(df, df_cognitive[ , c("ID","FSIQ")], by = c("id" = "ID"))
 
 
 

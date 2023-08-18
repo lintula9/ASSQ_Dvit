@@ -217,9 +217,19 @@ write_sav(df, writepath)
 
 }
 
+# Bootstraps of main results (Rask to 8 year) ---
+if(FALSE){
+  
+  lgBoot <- MclustBootstrap(LatentGaussians_6to8_nonapa)
+  plot(apply(lgBoot$mean[,,1], MARGIN = 2, density)[[1]], xlim = c(50,150))
+  sapply(2:4, FUN = function(i) lines(apply(lgBoot$mean[,,1], MARGIN = 2, density)[[i]], col = cols[1]))
+  sapply(1:4, FUN = function(i) lines(apply(lgBoot$mean[,,2], MARGIN = 2, density)[[i]], col = cols[2]))
+  
+  
+  bootstrapRes <- mclustBootstrapLRT(data = na.omit(df[, lcavars_6to8Included]), model = "VEE", maxG = 5)
+  }
 
 # Regressions ------
-
 
 with(df[ which(df$id %in% na.omit( df[ , c("id", lcavars_6to8Included[ -(1:2) ])] )$id) ,  ], {
   classific <- factor(as.list(.GlobalEnv)$LatentGaussians_1_2_6to8$classification)
@@ -265,7 +275,20 @@ plot(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 2, ]$ASSQ_6to8_sum)),
 lines(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 1, ]$ASSQ_6to8_sum)), col = "red")
 
 
+# Regressions to Cognitive measures ------
 
+ggplot(subset(df, !is.na(df$FSIQ) & !is.na(df$LDvitProfile_NoNapa_to_8year)), 
+       aes(color = factor(LDvitProfile_NoNapa_to_8year), x = FSIQ)) + 
+  geom_density( )
 
+summary(lm(
+  formula = FSIQ ~ factor(LDvitProfile_NoNapa_to_8year) * sukupuoli,
+  data = df # Nothing.
+))
+
+summary(lm(
+  formula = FSIQ ~ factor(LDvitProfile_NoNapa_to_2year) * sukupuoli,
+  data = df
+))
 
 

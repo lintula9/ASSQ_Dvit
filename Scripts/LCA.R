@@ -230,7 +230,7 @@ if(FALSE){
   }
 
 # Regressions ------
-
+if(FALSE){
 with(df[ which(df$id %in% na.omit( df[ , c("id", lcavars_6to8Included[ -(1:2) ])] )$id) ,  ], {
   classific <- factor(as.list(.GlobalEnv)$LatentGaussians_1_2_6to8$classification)
   summary(lm( ASSQ_6to8_mean ~ classific ))
@@ -274,9 +274,26 @@ hist(df$ASSQ_6to8_mean)
 plot(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 2, ]$ASSQ_6to8_sum)), col = "blue")
 lines(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 1, ]$ASSQ_6to8_sum)), col = "red")
 
+summary(lm( df,
+            formula = scale(ASSQ_6to8_mean) ~ 
+              factor(LDvitProfile_NoNapa_to_2year) * factor(sukupuoli) + 
+              factor(äidinkoulutus) + 
+              factor(isankoulutus))) # Interaction and SES contrl
+summary(lm( df,
+            formula = scale(ASSQ_6to8_sum) ~ 
+              factor(LDvitProfile_NoNapa_to_2year) )) 
+emmeans(lm( df,
+            formula = scale(ASSQ_6to8_sum) ~ 
+              factor(LDvitProfile_NoNapa_to_2year) * factor(sukupuoli) + 
+              factor(äidinkoulutus) + 
+              factor(isankoulutus)), specs = c("LDvitProfile_NoNapa_to_2year", "sukupuoli"), )
+hist(df$ASSQ_6to8_mean)
+plot(density(na.omit(df[df$LDvitProfile_NoNapa_to_2year == 2, ]$ASSQ_6to8_sum)), col = "blue")
+lines(density(na.omit(df[df$LDvitProfile_NoNapa_to_2year == 1, ]$ASSQ_6to8_sum)), col = "red")
 
+}
 # Regressions to Cognitive measures ------
-
+if(FALSE){
 ggplot(subset(df, !is.na(df$FSIQ) & !is.na(df$LDvitProfile_NoNapa_to_8year)), 
        aes(color = factor(LDvitProfile_NoNapa_to_8year), x = FSIQ)) + 
   geom_density( )
@@ -289,6 +306,6 @@ summary(lm(
 summary(lm(
   formula = FSIQ ~ factor(LDvitProfile_NoNapa_to_2year) * sukupuoli,
   data = df
-))
+))}
 
 

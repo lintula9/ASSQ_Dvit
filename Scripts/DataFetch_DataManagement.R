@@ -17,6 +17,10 @@ message("Done.")
 
 df$id[grep("313", df$id)] # WHO IS IT?
 
+# Mclust AIC calculator.
+
+AIC.mclust <- function(x) 2*x$df - 2*x$loglik
+
 
 # Add cognitive measure availability indicator --------------
 

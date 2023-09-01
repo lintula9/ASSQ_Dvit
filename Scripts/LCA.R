@@ -41,6 +41,7 @@ attr(LatentGaussians_2group, "Desc") <- "Rask, napa, 12mo, 24mo - forced to 2 gr
 LatentGaussians_NoNapa <- Mclust( data = na.omit( df[ , lcavars_nonapa ] ), 
                                  G = 1:6 )
 attr(LatentGaussians_NoNapa, "Desc") <- "Rask, 12mo, 24mo."
+
 # LCA with 6-8 year measurements included --------------
 
 LatentGaussians_All <- Mclust( data = na.omit( df[  , lcavars_6to8Included ] ), 
@@ -230,68 +231,95 @@ if(FALSE){
   }
 
 # Regressions ------
-if(FALSE){
-with(df[ which(df$id %in% na.omit( df[ , c("id", lcavars_6to8Included[ -(1:2) ])] )$id) ,  ], {
-  classific <- factor(as.list(.GlobalEnv)$LatentGaussians_1_2_6to8$classification)
-  summary(lm( ASSQ_6to8_mean ~ classific ))
-  } )
+hist(df$sqrt_ASSQ_6to8_sum)
+plot(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 2, ]$sqrt_ASSQ_6to8_sum)), col = "blue")
+lines(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 1, ]$sqrt_ASSQ_6to8_sum)), col = "red")
 
-
-with(df[ which(df$id %in% na.omit( df[ , c("id", lcavars_6to8Included[ -(2) ])] )$id) ,  ], {
-  classific <- factor(as.list(.GlobalEnv)$LatentGaussians_6to8_nonapa$classification)
-  summary(lm( ASSQ_6to8_mean ~ classific ))
-} )
-
-with(df[ which(df$id %in% na.omit( df[ , c("id", lcavars_6to8Included[ -(2) ])] )$id) ,  ], {
-  classific <- factor(as.list(.GlobalEnv)$LatentGaussians_6to8_nonapa$classification)
-  summary(lm( ASSQ_6to8_mean ~ classific ))
-} )
 
 summary(lm( df,
-    formula = ASSQ_6to8_mean ~ LDvitProfile_NoNapa_to_8year))
-
+    formula = sqrt_ASSQ_6to8_sum ~ LDvitProfile_NoNapa_to_8year))
 summary(lm( df[df$sukupuoli == 1, ],
-            formula = ASSQ_6to8_mean ~ LDvitProfile_NoNapa_to_8year)) # Males
+            formula = sqrt_ASSQ_6to8_sum ~ LDvitProfile_NoNapa_to_8year)) # Males
 summary(lm( df[df$sukupuoli == 2, ],
-            formula = ASSQ_6to8_mean ~ LDvitProfile_NoNapa_to_8year)) # Females
+            formula = sqrt_ASSQ_6to8_sum ~ LDvitProfile_NoNapa_to_8year)) # Females
+
 summary(lm( df,
-            formula = ASSQ_6to8_mean ~ LDvitProfile_NoNapa_to_8year * factor(sukupuoli))) # Interaction
+            formula = sqrt_ASSQ_6to8_sum ~ LDvitProfile_NoNapa_to_8year * factor(sukupuoli))) # Interaction
+
 summary(lm( df,
-            formula = ASSQ_6to8_mean ~ 
+            formula = sqrt_ASSQ_6to8_sum ~ 
               LDvitProfile_NoNapa_to_8year * factor(sukupuoli) + 
               factor(äidinkoulutus))) # Interaction and SES contrl
 summary(lm( df,
-            formula = scale(ASSQ_6to8_mean) ~ 
+            formula = scale(sqrt_ASSQ_6to8_sum) ~ 
               factor(LDvitProfile_NoNapa_to_8year) * factor(sukupuoli) + 
               factor(äidinkoulutus) + 
               factor(isankoulutus))) # Interaction and SES contrl
+
+summary(lm( df,
+            formula = scale(sqrt_ASSQ_6to8_sum) ~ 
+              factor(LDvitProfile_NoNapa_to_8year) * factor(sukupuoli) + 
+              factor(äidinkoulutus) + 
+              factor(isankoulutus) + 
+              imetyksen_kesto_yhdistetty +
+              cesd_mean)) # Samuel control
+summary(lm( df,
+            formula = scale(sqrt_ASSQ_6to8_sum) ~ 
+              factor(LDvitProfile_NoNapa_to_8year) +
+              factor(sukupuoli) + 
+              factor(äidinkoulutus) + 
+              factor(isankoulutus) + 
+              imetyksen_kesto_yhdistetty +
+              cesd_mean)) # Samuel control no int
 emmeans(lm( df,
             formula = scale(ASSQ_6to8_sum) ~ 
               factor(LDvitProfile_NoNapa_to_8year) * factor(sukupuoli) + 
               factor(äidinkoulutus) + 
-              factor(isankoulutus)), specs = c("LDvitProfile_NoNapa_to_8year", "sukupuoli"), )
-hist(df$ASSQ_6to8_mean)
-plot(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 2, ]$ASSQ_6to8_sum)), col = "blue")
-lines(density(na.omit(df[df$LDvitProfile_NoNapa_to_8year == 1, ]$ASSQ_6to8_sum)), col = "red")
+              factor(isankoulutus)), specs = c("LDvitProfile_NoNapa_to_8year", "sukupuoli"))
 
 summary(lm( df,
-            formula = scale(ASSQ_6to8_mean) ~ 
+            formula = scale(sqrt_ASSQ_6to8_sum) ~ 
+              factor(LDvitProfile_NoNapa_to_2year) * factor(sukupuoli))) # Interaction 
+emmeans(lm( df,
+            formula = scale(sqrt_ASSQ_6to8_sum) ~ 
+              factor(LDvitProfile_NoNapa_to_2year) * factor(sukupuoli)), 
+        specs = c("LDvitProfile_NoNapa_to_2year", "sukupuoli"))
+
+summary(lm( df,
+            formula = scale(sqrt_ASSQ_6to8_sum) ~ 
               factor(LDvitProfile_NoNapa_to_2year) * factor(sukupuoli) + 
               factor(äidinkoulutus) + 
               factor(isankoulutus))) # Interaction and SES contrl
 summary(lm( df,
-            formula = scale(ASSQ_6to8_sum) ~ 
+            formula = scale(sqrt_ASSQ_6to8_sum) ~ 
+              factor(LDvitProfile_NoNapa_to_2year) + 
+              factor(sukupuoli) + 
+              factor(äidinkoulutus) + 
+              factor(isankoulutus) + 
+              imetyksen_kesto_yhdistetty +
+              cesd_mean) 
+) # Samuel controls no int.
+summary(lm( df,
+            formula = scale(sqrt_ASSQ_6to8_sum) ~ 
+              factor(LDvitProfile_NoNapa_to_2year) * factor(sukupuoli) + 
+              factor(äidinkoulutus) + 
+              factor(isankoulutus) + 
+              imetyksen_kesto_yhdistetty +
+              cesd_mean)  
+        ) # Samuel controls with interaction
+
+
+summary(lm( df,
+            formula = scale(sqrt_ASSQ_6to8_sum) ~ 
               factor(LDvitProfile_NoNapa_to_2year) )) 
 emmeans(lm( df,
-            formula = scale(ASSQ_6to8_sum) ~ 
+            formula = scale(sqrt_ASSQ_6to8_sum) ~ 
               factor(LDvitProfile_NoNapa_to_2year) * factor(sukupuoli) + 
               factor(äidinkoulutus) + 
               factor(isankoulutus)), specs = c("LDvitProfile_NoNapa_to_2year", "sukupuoli"), )
-hist(df$ASSQ_6to8_mean)
-plot(density(na.omit(df[df$LDvitProfile_NoNapa_to_2year == 2, ]$ASSQ_6to8_sum)), col = "blue")
-lines(density(na.omit(df[df$LDvitProfile_NoNapa_to_2year == 1, ]$ASSQ_6to8_sum)), col = "red")
 
-}
+
+
 # Regressions to Cognitive measures ------
 if(FALSE){
 ggplot(subset(df, !is.na(df$FSIQ) & !is.na(df$LDvitProfile_NoNapa_to_8year)), 
@@ -306,6 +334,54 @@ summary(lm(
 summary(lm(
   formula = FSIQ ~ factor(LDvitProfile_NoNapa_to_2year) * sukupuoli,
   data = df
+  
 ))}
 
 
+
+
+plot(density(na.omit(df[df$sukupuoli == 1 & df$LDvitProfile_NoNapa_to_2year == 1,]$sqrt_ASSQ_6to8_sum)), 
+     ylim = c(0,.6), col = cols[1])
+lines(density(na.omit(df[df$sukupuoli == 1 & df$LDvitProfile_NoNapa_to_2year == 2,]$sqrt_ASSQ_6to8_sum)),
+      col = cols[1])
+lines(density(na.omit(df[df$sukupuoli == 2 & df$LDvitProfile_NoNapa_to_2year == 1,]$sqrt_ASSQ_6to8_sum)),
+      col = cols[2])
+lines(density(na.omit(df[df$sukupuoli == 2 & df$LDvitProfile_NoNapa_to_2year == 2,]$sqrt_ASSQ_6to8_sum)),
+      col = cols[2])
+
+
+meanvals <- summary(emmeans(lm( df,
+                        formula = scale(sqrt_ASSQ_6to8_sum) ~ 
+                          factor(LDvitProfile_NoNapa_to_8year) * factor(sukupuoli) + 
+                          factor(äidinkoulutus) + 
+                          factor(isankoulutus) + 
+                          imetyksen_kesto_yhdistetty +
+                          cesd_mean),
+                        specs = c("LDvitProfile_NoNapa_to_8year", "sukupuoli")))$emmean # Samuel control$emmean
+sds <- summary(emmeans(lm( df,
+                           formula = scale(sqrt_ASSQ_6to8_sum) ~ 
+                             factor(LDvitProfile_NoNapa_to_8year) * factor(sukupuoli) + 
+                             factor(äidinkoulutus) + 
+                             factor(isankoulutus) + 
+                             imetyksen_kesto_yhdistetty +
+                             cesd_mean), 
+                       specs = c("LDvitProfile_NoNapa_to_8year", "sukupuoli")))$SE
+densities <- matrix(ncol = length(meanvals), nrow = length(seq(-2,2,.01)))
+for ( i in 1:length(meanvals) ) {
+  densities[,i] <- dnorm(seq(-2,2,.01), meanvals[ i ], sds[ i ])  
+  
+  
+  
+}
+
+if(FALSE){
+matplot(seq(-2,2,.01), 
+        y = as.matrix(densities), 
+        type = "l", 
+        col = c(cols[1], cols[1], cols[2], cols[2]),
+        lty = c(1,2,1,2), ylab = "Approximated distribution of mean values", xlab = "ASSQ (ambiguous scale)")
+legend(1.5,2.75,inset = .05, legend = c("Male", "Female"), 
+       col = c(cols[1], cols[2]), lty = c(1,1), bty = "n")
+legend(1.5,2.5,inset = .05, legend = c("High", "Low"), 
+       col = "black", lty = c(2,1), bty = "n")
+}

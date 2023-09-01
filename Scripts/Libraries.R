@@ -5,7 +5,7 @@ package_names <- c("haven", "ggplot2", "mclust",
                    "GGally", "gridExtra", "scales",
                    "tidyverse", "MASS", "mvtnorm",
                    "rstan", "RColorBrewer", "bayesplot",
-                   "emmeans", "plotrix")
+                   "emmeans", "plotrix", "ProDenICA")
 
 for (i in package_names){
   if ( !requireNamespace( i, 

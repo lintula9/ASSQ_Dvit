@@ -70,7 +70,7 @@ dev.off()
 
 tiff("Figures/Trajectories_eAppendix2F2b.tiff", family = "serif", width = 6, height = 4, units = "in", res = 640, pointsize = 10)
 
-plotres <- Mclust(na.omit(df[,lcavars_nonapa]))
+plotres <- Mclust(na.omit(df[,lcavars_nonapa]),G=2, modelNames = "VEI")
 colnames(plotres$data) <- c("Pregnancy", "1-year", "2-year")
 
 plot(plotres, "classification", add = T)
@@ -100,8 +100,8 @@ AICs <- -(2*params - 2*LLs)
 
 tiff("Figures/BIC_AIC.tiff", family = "serif", width = 6, height = 4, units = "in", res = 640, pointsize = 10)
 par(mfrow = c(1,2))
-matplot(BICs[], ylab = "BIC", type = "l", xlab = "k", ylim = c(-17900, -17300), xaxp = c(1,9,8))
-matplot(AICs[], ylab = "AIC", type = "l", xlab = "k", ylim = c(-17900, -17300), xaxp = c(1,9,8))
+matplot(-BICs, ylab = "BIC", type = "l", xlab = "k", ylim = c(17300, 17900), xaxp = c(1,9,8))
+matplot(-AICs, ylab = "AIC", type = "l", xlab = "k", ylim = c(17300, 17900), xaxp = c(1,9,8))
 par(mfrow = c(1,1))
 
 # Test AIC suggested 3 groups ...?

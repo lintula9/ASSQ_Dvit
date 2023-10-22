@@ -7,7 +7,7 @@ matplot(LatentGaussians_NoNapa$parameters$mean, type = "l",
         ylab = "Mean 25(OH)D", xlab = "Measurement time", 
         main = "", cex.lab = 1, cex.axis = 1, col = cols[1:2])
 axis( 1, at = 1:nrow(LatentGaussians_NoNapa$parameters$mean) , 
-      labels = c("Prenatal", "1 Year", "2 Year"), cex.axis = 1 )
+      labels = c("Pregnancy", "12 months", "24 months"), cex.axis = 1 )
 axis( 2, at = seq( 50, 150, length.out = 5 ), cex.axis = 1 )
 # legend(x=1, y = 60, lty = c(1,2), col = cols[1:2],
 #        legend = paste(1:2,"n:",table(LatentGaussians_6to8_nonapa$classification)))

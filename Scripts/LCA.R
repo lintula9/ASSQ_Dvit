@@ -326,6 +326,11 @@ ggplot(subset(df, !is.na(df$FSIQ) & !is.na(df$LDvitProfile_NoNapa_to_8year)),
        aes(color = factor(LDvitProfile_NoNapa_to_8year), x = FSIQ)) + 
   geom_density( )
 
+  summary(lm(
+    formula = FSIQ ~ factor(LDvitProfile_NoNapa_to_8year),
+    data = df # Nothing.
+  ))
+  
 summary(lm(
   formula = FSIQ ~ factor(LDvitProfile_NoNapa_to_8year) + sukupuoli,
   data = df # Nothing.
@@ -334,8 +339,8 @@ summary(lm(
 summary(lm(
   formula = FSIQ ~ factor(LDvitProfile_NoNapa_to_2year) * sukupuoli,
   data = df
-  
 ))
+
 }
 
 

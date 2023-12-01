@@ -79,6 +79,13 @@ LatentGaussians_OnlyWith_ASSQavailable_3measures <- Mclust( data = na.omit( df[ 
                                                   G = 1:6 )
 attr(LatentGaussians_OnlyWith_ASSQavailable_3measures, "Desc") <- "Only if ASSQ not NA\nRask, 12mo, 24mo."
 
+df$LatentGaussians_OnlyWith_ASSQavailable_3measures <- NA
+df[ which( df$id %in% na.exclude(df[ !is.na(df$ASSQ_6to8_mean) , 
+                                     c(lcavars_6to8Included[ -c(2,5) ], "id" ) ])$id ) , ]$LatentGaussians_OnlyWith_ASSQavailable_3measures <- LatentGaussians_OnlyWith_ASSQavailable_3measures$classification
+attr(df$LatentGaussians_OnlyWith_ASSQavailable_3measures , "label") <- "Latent profile indicator; when using no napa measurement"
+attr(df$LatentGaussians_OnlyWith_ASSQavailable_3measures , "format.spss") <- "F12.1"
+
+
 
 # LCA, including cases with ASSQ scores available, forcing 2 groups.
 LatentGaussians_OnlyWith_ASSQavailable_2group <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars ] ), 

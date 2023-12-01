@@ -31,6 +31,18 @@ segments(x0 = 1:3, x1 = 1:3, y1 = upper2, y0 = lower2, col = cols[2])
 
 dev.off()
 
+# Addition with limiting to those who had ASSQ available:
+
+aggregate(na.omit(df[ !is.na(df$Zsqrt_ASSQ_6to8_sum), 
+                      c("LDvitProfile_NoNapa_to_2year",
+                lcavars_nonapa) ])[ , lcavars_nonapa], 
+          by = list((na.omit(df[ !is.na(df$Zsqrt_ASSQ_6to8_sum) , c("LDvitProfile_NoNapa_to_2year",
+                                     lcavars_nonapa) ]))$LDvitProfile_NoNapa_to_2year),
+          mean)
+
+
+
+
 # LPA figure, napa
 
 tiff("Figures/Trajectories_napa.tiff", family = "serif", width = 4, height = 4, units = "in", res = 640, pointsize = 8)

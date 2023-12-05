@@ -32,18 +32,56 @@ segments(x0 = 1:3, x1 = 1:3, y1 = upper2, y0 = lower2, col = cols[2])
 dev.off()
 
 # Addition with limiting to those who had ASSQ available:
+tiff("Figures/TrajectoriesASSQavailable.tiff", family = "serif", width = 4, height = 4, units = "in", res = 480, pointsize = 8)
 
-aggregate(na.omit(df[ !is.na(df$Zsqrt_ASSQ_6to8_sum), 
+matplot(t(aggregate(na.omit(df[ !is.na(df$Zsqrt_ASSQ_6to8_sum), 
                       c("LDvitProfile_NoNapa_to_2year",
                 lcavars_nonapa) ])[ , lcavars_nonapa], 
           by = list((na.omit(df[ !is.na(df$Zsqrt_ASSQ_6to8_sum) , c("LDvitProfile_NoNapa_to_2year",
                                      lcavars_nonapa) ]))$LDvitProfile_NoNapa_to_2year),
-          mean)
+          mean)[,2:4]), type = "l", 
+        axes = F, ylim = c(50,150), 
+        ylab = "Mean 25(OH)D", xlab = "Measurement time", 
+        main = "", cex.lab = 1, cex.axis = 1, col = cols[1:2])
+means <- t(aggregate(na.omit(df[ !is.na(df$Zsqrt_ASSQ_6to8_sum), 
+                                 c("LDvitProfile_NoNapa_to_2year",
+                                   lcavars_nonapa) ])[ , lcavars_nonapa], 
+                     by = list((na.omit(df[ !is.na(df$Zsqrt_ASSQ_6to8_sum) , c("LDvitProfile_NoNapa_to_2year",
+                                                                               lcavars_nonapa) ]))$LDvitProfile_NoNapa_to_2year),
+                     mean)[,2:4])
+sds <- t(aggregate(na.omit(df[ !is.na(df$Zsqrt_ASSQ_6to8_sum), 
+                               c("LDvitProfile_NoNapa_to_2year",
+                                 lcavars_nonapa) ])[ , lcavars_nonapa], 
+                   by = list((na.omit(df[ !is.na(df$Zsqrt_ASSQ_6to8_sum) , c("LDvitProfile_NoNapa_to_2year",
+                                                                             lcavars_nonapa) ]))$LDvitProfile_NoNapa_to_2year),
+                   sd)[,2:4])
+smplsizes <- t(aggregate(na.omit(df[ !is.na(df$Zsqrt_ASSQ_6to8_sum), 
+                                     c("LDvitProfile_NoNapa_to_2year",
+                                       lcavars_nonapa) ])[ , lcavars_nonapa], 
+                         by = list((na.omit(df[ !is.na(df$Zsqrt_ASSQ_6to8_sum) , c("LDvitProfile_NoNapa_to_2year",
+                                                                                   lcavars_nonapa) ]))$LDvitProfile_NoNapa_to_2year),
+                         length)[,2:4])
+
+sdmean <- sds / sqrt(smplsizes)
+
+upper1 <- means[,1] + 2*sdmean[,1]
+lower1 <- means[,1] - 2*sdmean[,1]
+
+upper2 <- means[,2] + 2*sdmean[,2]
+lower2 <- means[,2] - 2*sdmean[,2]
+
+segments(x0 = 1:3, x1 = 1:3, y1 = upper1, y0 = lower1, col = cols[1])
+segments(x0 = 1:3, x1 = 1:3, y1 = upper2, y0 = lower2, col = cols[2])
 
 
+axis( 1, at = 1:nrow(LatentGaussians_NoNapa$parameters$mean) , 
+      labels = c("Pregnancy", "12 months", "24 months"), cex.axis = 1 )
+axis( 2, at = seq( 50, 150, length.out = 5 ), cex.axis = 1 )
+
+dev.off()
 
 
-# LPA figure, napa
+# LPA figure, napa -----
 
 tiff("Figures/Trajectories_napa.tiff", family = "serif", width = 4, height = 4, units = "in", res = 640, pointsize = 8)
 matplot(LatentGaussians_All$parameters$mean, type = "l", 

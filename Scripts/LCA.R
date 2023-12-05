@@ -78,12 +78,20 @@ attr(LatentGaussians_OnlyWith_ASSQavailable, "Desc") <- "Only if ASSQ not NA\nRa
 LatentGaussians_OnlyWith_ASSQavailable_3measures <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars_nonapa ] ), 
                                                   G = 1:6 )
 attr(LatentGaussians_OnlyWith_ASSQavailable_3measures, "Desc") <- "Only if ASSQ not NA\nRask, 12mo, 24mo."
-
 df$LatentGaussians_OnlyWith_ASSQavailable_3measures <- NA
 df[ which( df$id %in% na.exclude(df[ !is.na(df$ASSQ_6to8_mean) , 
                                      c(lcavars_6to8Included[ -c(2,5) ], "id" ) ])$id ) , ]$LatentGaussians_OnlyWith_ASSQavailable_3measures <- LatentGaussians_OnlyWith_ASSQavailable_3measures$classification
-attr(df$LatentGaussians_OnlyWith_ASSQavailable_3measures , "label") <- "Latent profile indicator; when using no napa measurement"
+attr(df$LatentGaussians_OnlyWith_ASSQavailable_3measures , "label") <- "Latent profile indicator; when using no napa measurement and only those with ASSQ measurement available."
 attr(df$LatentGaussians_OnlyWith_ASSQavailable_3measures , "format.spss") <- "F12.1"
+
+# Force to 2 group solution:
+LatentGaussians_OnlyWith_ASSQavailable_3measures_2group <- Mclust( data = na.omit( df[ !is.na(df$ASSQ_6to8_mean) , lcavars_nonapa ] ), 
+                                                            G = 2 )
+df$LatentGaussians_OnlyWith_ASSQavailable_3measures_2group <- NA
+df[ which( df$id %in% na.exclude(df[ !is.na(df$ASSQ_6to8_mean) , 
+                                     c(lcavars_nonapa, "id" ) ])$id ) , ]$LatentGaussians_OnlyWith_ASSQavailable_3measures_2group <- LatentGaussians_OnlyWith_ASSQavailable_3measures_2group$classification
+attr(df$LatentGaussians_OnlyWith_ASSQavailable_3measures_2group , "label") <- "Latent profile indicator; when using no napa measurement and only those with ASSQ measurement available; forced to 2 group."
+attr(df$LatentGaussians_OnlyWith_ASSQavailable_3measures_2group , "format.spss") <- "F12.1"
 
 
 
@@ -218,7 +226,7 @@ attr(LatentGaussians_1_2_6to8, "Desc") <- "12mo, 24mo, 6 to 8 years."
   #
 ########################### Save ############################### 
 
-if( FALSE ) {
+if( F ) {
 
 writepath <- "Z:/psy_vidi/Samuel VIDI 6-8y follow-up/ASSQMaster data - Sakari/ASSQMaster_Profiles.sav"
 write_sav(df, writepath)

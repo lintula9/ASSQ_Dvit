@@ -18,7 +18,7 @@ for (i in package_names){
 # Graphical settings
 cols <- brewer.pal(n = 8, name = "Dark2")[1:3]
 names(cols) <- c("Total", "Male", "Female")
-theme_set(theme_bw())
+theme_set(theme_bw(base_size = 16))
 options(ggplot2.discrete.colour= cols)
 par(family = "serif")
 

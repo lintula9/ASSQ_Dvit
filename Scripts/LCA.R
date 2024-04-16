@@ -16,13 +16,6 @@ lcavars_6to8Included <- c(lcavars, "D25OHD_nmol_l_6to8") # Variable was not in t
 
 
 
-# Visualize relationships between D-vitamin variables.
-
-ggpairs(na.omit( df[ , c(lcavars,"sukupuoli") ] ), 
-        columns = lcavars, 
-        mapping = aes( col = factor( sukupuoli ) ) )
-
-
           ####################################
           # Fit models ------------###########
           

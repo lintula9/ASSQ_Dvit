@@ -11,13 +11,23 @@ axis( 1, at = 1:nrow(LatentGaussians_NoNapa$parameters$mean) ,
 axis( 2, at = seq( 50, 150, length.out = 5 ), cex.axis = 1 )
 # legend(x=1, y = 60, lty = c(1,2), col = cols[1:2],
 #        legend = paste(1:2,"n:",table(LatentGaussians_6to8_nonapa$classification)))
+
+
+means <- LatentGaussians_NoNapa$parameters$mean
+
+
+
+# plotrix::plotCI(x = 1:4 ,F = means[,1], ui = upper1, li = lower1,)
+segments(x0 = 1:3, x1 = 1:3, y1 = upper1, y0 = lower1, col = cols[1])
+segments(x0 = 1:3, x1 = 1:3, y1 = upper2, y0 = lower2, col = cols[2])
+
+dev.off()
+
 var1 <- LatentGaussians_NoNapa$parameters$variance$sigma[,,1]
 var2 <- LatentGaussians_NoNapa$parameters$variance$sigma[,,2]
 
 sd1 <- sqrt(diag(var1)) / sqrt(113)
 sd2 <- sqrt(diag(var2)) / sqrt(119)
-
-means <- LatentGaussians_NoNapa$parameters$mean
 
 upper1 <- means[,1] + 2*sd1
 lower1 <- means[,1] - 2*sd1
@@ -25,11 +35,42 @@ lower1 <- means[,1] - 2*sd1
 upper2 <- means[,2] + 2*sd2
 lower2 <- means[,2] - 2*sd2
 
-# plotrix::plotCI(x = 1:4 ,F = means[,1], ui = upper1, li = lower1,)
-segments(x0 = 1:3, x1 = 1:3, y1 = upper1, y0 = lower1, col = cols[1])
-segments(x0 = 1:3, x1 = 1:3, y1 = upper2, y0 = lower2, col = cols[2])
+plotData = data.frame(cbind(as.vector(LatentGaussians_NoNapa$parameters$mean), c(sd1,sd2)))
+plotData$group = rep(c("Low", "High"), each = 3)
 
+tiff("Figures/Trajectories.tiff", family = "serif", width = 12, height = 12, units = "in", res = 480, pointsize = 10, compression = "jpeg")
+
+ggplot2::ggplot(data = plotData, mapping = aes(x = rep(1:3, times = 2), colour = factor(group, levels = c("Low", "High")))) + 
+  geom_point(mapping = aes(y = X1), size = 3) + 
+  geom_line(mapping = aes(y = X1)) + 
+  geom_errorbar(aes(ymin = X1 - 2*X2, 
+                    ymax = X1 + 2*X2), width=.05, lwd = 1) + 
+  coord_cartesian(ylim = c(50,150)) + 
+  scale_color_manual(values = c("#003366", "darkorange3"), guide = guide_legend(position = "bottom", title = "Trajectory", )) + 
+  xlab("Measurement time") + ylab("Mean 25(OH)D") + 
+  scale_x_continuous(breaks = 1:3, labels = c("Pregnancy", "12 Months", "24 Months")) +
+  theme(plot.margin = unit(c(1,1,1,1), "cm")) +
+  theme(text = element_text(size = 24, family = "serif"),
+        axis.text.x = element_text(size = 20), 
+        axis.title.x = element_text(vjust = -1),
+        axis.ticks.x = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.margin = margin(20,0.5,0.5,0.5) ) 
 dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Addition with limiting to those who had ASSQ available:
 tiff("Figures/TrajectoriesASSQavailable.tiff", family = "serif", width = 4, height = 4, units = "in", res = 480, pointsize = 8)

@@ -436,7 +436,7 @@ stan_data123_males = list( # Pregnancy (1), 12mo (2), 24mo (3)
                               c( 1/4, 1/4, 2/4 )),
   ExpAccumulationWeights = c( 1/3, 1/3, 1/3 ),
   ExpCriticalChildhoodWeights = c( 0, 0, 0 )
-  
+
 )
 
 stan_data123_females = list( # Pregnancy (1), 12mo (2), 24mo (3)
@@ -466,3 +466,7 @@ stan_data123_females = list( # Pregnancy (1), 12mo (2), 24mo (3)
   ExpCriticalChildhoodWeights = c( 0, 0, 0 )
   
 )
+
+# Load the data for possible p factor
+library(haven)
+vastsynt <- read_sav("Z:/psy_vidi/Vanha_VIDI-kansio/0 Vastasyntyneisyys seuranta/VIDI_vastasyntynyt_all_21032018.sav")
